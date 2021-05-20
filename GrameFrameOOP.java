@@ -19,7 +19,8 @@ class GameFrameOOP extends JFrame {
     
     // Set the frame to full screen 
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+    //resolution 
+    this.setSize(1280,720);
     // this.setUndecorated(true);  //Set to true to remove title bar
     //frame.setResizable(false);
     
