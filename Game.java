@@ -166,8 +166,6 @@ public class Game extends JFrame {
  }
 
  public void gameRender(Graphics g) {
-  g.setColor(Color.BLUE); // There are many graphics commands that Java can use
-  g.fillRect((int) 10, (int) 10, 50, 50); // notice the x,y variables that we control from our animate method
   player.drawSprite(g);
   player.moveProjectile();
   player.drawPlayerProjectile(g);
