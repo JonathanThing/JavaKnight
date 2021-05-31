@@ -8,8 +8,8 @@ import java.awt.Rectangle;
 abstract class GameObject{
 
   //coords
-  private int x;
-  private int y;
+  private double x;
+  private double y;
 
   //attributes
   private int width;
@@ -18,12 +18,12 @@ abstract class GameObject{
   private String name;
   
   //get x
-  public int getX(){
+  public double getX(){
     return this.x;
   }
   
   //get y
-  public int getY(){
+  public double getY(){
     return this.y;
   }
   
@@ -58,10 +58,10 @@ abstract class GameObject{
   }
   
   //make rectangle
-  Rectangle collisionRect = new Rectangle(getX(), getY(), getX() + getWidth(), getY()+getHeight());
+  Rectangle collisionRect = new Rectangle((int)getX(), (int)getY(), (int) getX() + getWidth(), (int) getY()+getHeight());
   
   //constructor
-  GameObject(int x, int y, int width, int height, String name){
+  GameObject(double x, double y, int width, int height, String name){
   //GameObject(int x, int y, int width, int height, BufferedImage sprite, String name){
     this.x = x;
     this.y = y;
