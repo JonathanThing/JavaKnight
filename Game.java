@@ -1,5 +1,6 @@
 
 //Graphics &GUI imports
+import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
@@ -15,13 +16,24 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
-public class Game extends JFrame {
-  
- int playerX = 50;
- int playerY = 50;
- 
- Player player = new Player(playerX,playerY,100,50,"player",100,"sword",50);
+//Import ArrayList
+import java.util.ArrayList;
 
+//Import Math
+import java.lang.Math;
+
+public class Game extends JFrame {
+
+ private BufferStrategy bs;
+ 
+ static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();  
+    
+ static int playerX = 50;
+ static int playerY = 50;
+
+ static Player player = new Player(playerX, playerY, 100, 50, "player", 100, "sword", 50);
+
+ 
  /****************** CLASS VARIABLES *******************/
  /** The variables can be accessed across all methods **/
  /******************************************************/
@@ -29,13 +41,14 @@ public class Game extends JFrame {
  static GameAreaPanel gamePanel;
  static Graphics g;
  static int gameState = 0; // 0 = Menu, 1 = Game
- 
+ static boolean up, down, left, right;
 
  /***************************************************************/
  /** GameFrame - Setups up the Window and Starts displaying it **/
  /***************************************************************/
 
  Game() {
+   
   super("My Game");
 
   // Set the frame to full screen
@@ -43,6 +56,9 @@ public class Game extends JFrame {
 
   // Set resolution 1280x780
   this.setSize(1280, 780);
+  
+  //Prevent resizing of the tab
+  this.setResizable(false);
 
   // Create Game panel for rendering
   gamePanel = new GameAreaPanel();
@@ -73,6 +89,9 @@ public class Game extends JFrame {
 
  /********************* Main Method ************************/
  public static void main(String[] args) {
+   
+  enemyList.add(new Enemy(200, 400, 100, 100, "Enemy" , 100, "idk", player));
+   
   System.out.println("?>?");
 
   EventQueue.invokeLater(() -> {
@@ -115,6 +134,7 @@ public class Game extends JFrame {
   /************************** PaintComponenet ************************/
   /** This section is where the screen is drawn **/
   /*******************************************************************/
+    
   public void paintComponent(Graphics g) {
    super.paintComponent(g); // required
    setDoubleBuffered(true);
@@ -146,10 +166,25 @@ public class Game extends JFrame {
  }
 
  public void gameTick() {
+
+  if (up) {
+   player.moveUp(10);
+  }
   
+  if (down) {
+   player.moveDown(10);
+  }
   
+  if (left) {
+   player.moveLeft(10);
+  }
+  
+  if (right) {
+   player.moveRight(10);
+  }
+
   try {
-   Thread.sleep(33); // 16 = 60fps, 33 = 30fps
+   Thread.sleep(16); // 16 = 60fps, 33 = 30fps
   } catch (Exception exc) {
 
   } // delay
@@ -162,13 +197,31 @@ public class Game extends JFrame {
   Font font = new Font("Serif", Font.PLAIN, 50);
   g.setFont(font);
   g.drawString("Epic Menu\n Click mouse to play game", 10, 60);
+  
 
+ }
+ 
+ public int getRandomNumber(int min, int max) {
+   return (int) ((Math.random() * (max - min)) + min);
  }
 
  public void gameRender(Graphics g) {
   player.drawSprite(g);
   player.moveProjectile();
   player.drawPlayerProjectile(g);
+  
+  for (int i = 0; i < enemyList.size(); i++){
+    (enemyList.get(i)).drawEnemy(g);
+    (enemyList.get(i)).getHit(player);
+    (enemyList.get(i)).moveProjectile();
+    (enemyList.get(i)).drawEnemyProjectile(g);
+    
+    if (getRandomNumber(1,120) == 1){
+      (enemyList.get(i)).shoot(player);
+    }
+        
+  }
+  
   
  }
 
@@ -192,35 +245,53 @@ public class Game extends JFrame {
  class MyKeyListener implements KeyListener {
 
   public void keyPressed(KeyEvent e) {
-         //System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
-        
-    if (KeyEvent.getKeyText(e.getKeyCode()).equals("W")) {  
-      player.moveUp(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("S")) {  
-      player.moveDown(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {  
-      player.moveLeft(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  
-      player.moveRight(50);
-    } 
-        /*
-         if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  //If 'D' is pressed
-           
-         }
-         */  
-           
-           
-           
+   // System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
+
+   if (KeyEvent.getKeyText(e.getKeyCode()).equals("W")) {
+    System.out.println("press4d");
+    up = true;
+   }
+   if (KeyEvent.getKeyText(e.getKeyCode()).equals("S")) {
+    down = true;
+   }
+   if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {
+    left = true;
+   }
+   if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {
+    right = true;
+   }
+   /*
+    * if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) { //If 'D' is pressed
+    * 
+    * }
+    */
+
 //         } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //If ESC is pressed
 //           System.out.println("YIKES ESCAPE KEY!"); //close frame & quit
 //           System.exit(0);
 //         } 
-       }   
-       
-       public void keyTyped(KeyEvent e) {  
-       }
-       public void keyReleased(KeyEvent e) {
-       }
+  }
+
+  public void keyTyped(KeyEvent e) {  
+   
+  }
+
+  public void keyReleased(KeyEvent e) {
+   
+   if (e.getKeyCode() == 'W') {  
+    System.out.println("released");
+       up = false;
+      } 
+      if (e.getKeyCode() == 'S') {  
+       down = false;
+      } 
+      if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {  
+       left = false;
+      } 
+      if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  
+       right = false;
+      } 
+  }
  }
 
  /****** Key Listener *********************************/
@@ -237,8 +308,8 @@ public class Game extends JFrame {
 
    if (gameState == 0) {
     changeState(1);
-   } else if (gameState == 1){
-     player.shoot(e.getX(), e.getY());
+   } else if (gameState == 1) {
+    player.shoot(e.getX(), e.getY());
    }
 
   }
