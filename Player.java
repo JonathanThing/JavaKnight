@@ -23,7 +23,7 @@ class Player extends Character{
   //load sprite
   public void loadSprite() { 
     try {
-      sprite = ImageIO.read(new File("images/sprite.png"));
+      sprite = ImageIO.read(new File("src/images/sprite.png"));
       
     } catch(Exception e) { 
       System.out.println("error loading sprite");};
@@ -31,18 +31,26 @@ class Player extends Character{
   
   //draw
   public void drawSprite(Graphics g) { 
-    g.drawImage(sprite, (int) getX(), (int) getY(),null);
+    g.drawImage(sprite, (int) getX() - getWidth()/2, (int) getY(), getWidth(),  getHeight(), null);
+    
   }
 
   //create projectiles
   public void shoot(double targetX, double targetY){
+	  
+	
     double xDifference = targetX - getX();
     double yDifference = targetY - getY();
     
-    double xChange = Math.round(xDifference/10);
-    double yChange = Math.round(yDifference/10);
+    //Calculating the hypotenies to normalize the thing
+    double hyp = Math.sqrt(Math.pow(xDifference,2) + Math.pow(yDifference,2));
+
+    double xChange = (xDifference/hyp);
+    double yChange = (yDifference/hyp);
+
     
-    playerProjectiles.add(new Projectile(getX(), getY(), 50, 50, "Bullet", 20, xChange, yChange));
+    
+    playerProjectiles.add(new Projectile(this.getX(), this.getY(), 10, 10, "Bullet", 20, xChange, yChange));
   }
 
   //move projectiles    

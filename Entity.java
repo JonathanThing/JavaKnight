@@ -16,22 +16,22 @@ abstract class Entity extends GameObject implements Moveable{
   
   //Move Left
   public void moveLeft(double n) {
-    this.setX( (int) (this.getX()-n));
+    this.setX(this.getX()-n);
   }
 
   //Move Right
   public void moveRight(double n) {
-    this.setX((int)(this.getX()+n));
+    this.setX(this.getX()+n);
   }
   
   //Move Up
   public void moveUp(double n) {
-    this.setY((int)(this.getY()-n));
+    this.setY(this.getY()-n);
   }
   
   //Move Down
   public void moveDown(double n) {
-    this.setY((int)(this.getY()+n));
+    this.setY(this.getY()+n);
   }
   
   //Constructor

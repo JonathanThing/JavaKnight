@@ -25,7 +25,7 @@ public class Game extends JFrame {
 	int playerX = 50;
 	int playerY = 50;
 
-	Player player = new Player(playerX, playerY, 100, 50, "player", 100, "sword", 50);
+	Player player = new Player(playerX, playerY, 100, 100, "player", 100, "sword", 50);
 
 	/****************** CLASS VARIABLES *******************/
 	/** The variables can be accessed across all methods **/
@@ -154,23 +154,23 @@ public class Game extends JFrame {
 	}
 
 	public void gameTick() {
-
+	
 		if (up) {
-			player.moveUp(10);
+			player.moveUp(5);	
 		}
 		
 		if (down) {
-			player.moveDown(10);
-		}
+			player.moveDown(5);	
+		} 
 		
 		if (left) {
-			player.moveLeft(10);
-		}
+			player.moveLeft(5);	
+		} 
 		
 		if (right) {
-			player.moveRight(10);
-		}
-
+			player.moveRight(5);	
+		} 
+		
 		try {
 			Thread.sleep(16); // 16 = 60fps, 33 = 30fps
 		} catch (Exception exc) {
@@ -218,19 +218,18 @@ public class Game extends JFrame {
 		public void keyPressed(KeyEvent e) {
 			// System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
 
-			if (KeyEvent.getKeyText(e.getKeyCode()).equals("W")) {
-				System.out.println("press4d");
-				up = true;
-			}
-			if (KeyEvent.getKeyText(e.getKeyCode()).equals("S")) {
-				down = true;
-			}
-			if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {
-				left = true;
-			}
-			if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {
-				right = true;
-			}
+			if (e.getKeyCode() == 'W') {  
+		    	up = true;
+		    } 
+		    if (e.getKeyCode() == 'S') {  
+		    	down = true;
+		    } 
+		    if (e.getKeyCode() == 'A') {  
+		    	left = true;
+		    } 
+		    if (e.getKeyCode() == 'D') {  
+		    	right = true;
+		    } 
 			/*
 			 * if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) { //If 'D' is pressed
 			 * 
@@ -250,16 +249,15 @@ public class Game extends JFrame {
 		public void keyReleased(KeyEvent e) {
 			
 			if (e.getKeyCode() == 'W') {  
-				System.out.println("released");
 		    	up = false;
 		    } 
 		    if (e.getKeyCode() == 'S') {  
 		    	down = false;
 		    } 
-		    if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {  
+		    if (e.getKeyCode() == 'A') {  
 		    	left = false;
 		    } 
-		    if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  
+		    if (e.getKeyCode() == 'D') {  
 		    	right = false;
 		    } 
 		}
@@ -274,18 +272,20 @@ public class Game extends JFrame {
 	class MyMouseListener implements MouseListener {
 
 		public void mouseClicked(MouseEvent e) {
-			System.out.println("Mouse Clicked");
-			System.out.println("X:" + e.getX() + " y:" + e.getY());
+			
+		}
+
+		public void mousePressed(MouseEvent e) {
+			System.out.println("\nMouse Clicked");
+			System.out.println("Mouse X:" + e.getX() + " y:" + e.getY());
 
 			if (gameState == 0) {
 				changeState(1);
 			} else if (gameState == 1) {
+						
 				player.shoot(e.getX(), e.getY());
 			}
 
-		}
-
-		public void mousePressed(MouseEvent e) {
 		}
 
 		public void mouseReleased(MouseEvent e) {
