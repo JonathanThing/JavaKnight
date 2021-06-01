@@ -23,7 +23,7 @@ class Player extends Character{
   //load sprite
   public void loadSprite() { 
     try {
-      sprite = ImageIO.read(new File("src/images/sprite.png"));
+      sprite = ImageIO.read(new File("images/sprite.png"));
       
     } catch(Exception e) { 
       System.out.println("error loading sprite");};
