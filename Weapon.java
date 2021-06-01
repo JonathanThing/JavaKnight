@@ -13,7 +13,7 @@ class Weapon extends Items{
   String ammoType;
 
   //constructor 
-  Weapon(int x, int y, int width, int height, String name, double damage, double fireRate, double range, String ammoType){
+  Weapon(double x, double y, int width, int height, String name, double damage, double fireRate, double range, String ammoType){
     super(x, y, width,  height, name);
     this.damage = damage;
     this.fireRate = fireRate;
