@@ -1,5 +1,6 @@
 
 //Graphics &GUI imports
+import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
@@ -15,246 +16,332 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
+//Import ArrayList
+import java.util.ArrayList;
+
+//Import Math
+import java.lang.Math;
+
 public class Game extends JFrame {
-  
- int playerX = 50;
- int playerY = 50;
- 
- Player player = new Player(playerX,playerY,100,50,"player",100,"sword",50);
 
- /****************** CLASS VARIABLES *******************/
- /** The variables can be accessed across all methods **/
- /******************************************************/
+	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 
- static GameAreaPanel gamePanel;
- static Graphics g;
- static int gameState = 0; // 0 = Menu, 1 = Game
- 
+	static double playerX = 50;
+	static double playerY = 50;
+	
+	static int thingX, thingY;
 
- /***************************************************************/
- /** GameFrame - Setups up the Window and Starts displaying it **/
- /***************************************************************/
+	static Player player = new Player(playerX, playerY, 50, 50, "player", 100, "sword", 50);
 
- Game() {
-  super("My Game");
+	/****************** CLASS VARIABLES *******************/
+	/** The variables can be accessed across all methods **/
+	/******************************************************/
 
-  // Set the frame to full screen
-  this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	static GameAreaPanel gamePanel;
+	static Graphics g;
+	static int gameState = 0; // 0 = Menu, 1 = Game
+	static boolean up, down, left, right;
 
-  // Set resolution 1280x780
-  this.setSize(1280, 780);
+	/***************************************************************/
+	/** GameFrame - Setups up the Window and Starts displaying it **/
+	/***************************************************************/
 
-  // Create Game panel for rendering
-  gamePanel = new GameAreaPanel();
-  this.add(new GameAreaPanel());
+	Game() {
 
-  // Keyboard Listener
-  MyKeyListener keyListener = new MyKeyListener();
-  this.addKeyListener(keyListener);
+		super("My Game");
 
-  // Mouse Listener
-  MyMouseListener mouseListener = new MyMouseListener();
-  this.addMouseListener(mouseListener);
+		// Set the frame to full screen
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-  // Sets the frame in focused
-  this.requestFocusInWindow();
+		// Set resolution 1280x780
+		this.setSize(1280, 780);
 
-  // Thread
-  Thread t = new Thread(new Runnable() {
-   public void run() {
-    animate();
-   }
-  }); // start the gameLoop
-  t.start();
+		// Prevent resizing of the tab
+		this.setResizable(false);
 
- }
+		// Create Game panel for rendering
+		gamePanel = new GameAreaPanel();
+		this.add(new GameAreaPanel());
 
- /************************ End of GameFrame ***********************/
+		// Keyboard Listener
+		MyKeyListener keyListener = new MyKeyListener();
+		this.addKeyListener(keyListener);
 
- /********************* Main Method ************************/
- public static void main(String[] args) {
-  System.out.println("?>?");
+		// Mouse Listener
+		MyMouseListener mouseListener = new MyMouseListener();
+		this.addMouseListener(mouseListener);
 
-  EventQueue.invokeLater(() -> {
-   Game gameInstance = new Game();
-   gameInstance.setVisible(true);
-  });
- }
+		// Sets the frame in focused
+		this.requestFocusInWindow();
 
- /****** end of Main *********************************/
+		// Thread
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				animate();
+			}
+		}); // start the gameLoop
+		t.start();
 
- /********************* Animate - Gameloop ************************/
- /******* This section is where the games state is updated. *******/
- /*****************************************************************/
- public void animate() {
+	}
 
-  // Intialize functions
+	/************************ End of GameFrame ***********************/
 
-  while (true) {
+	/********************* Main Method ************************/
+	public static void main(String[] args) {
 
-   if (gameState == 0) {
+		enemyList.add(new Enemy(200, 400, 50, 50, "Enemy", 100, "idk", player));
 
-    menuTick();
+		System.out.println("?>?");
 
-   } else if (gameState == 1) { // Game State
+		EventQueue.invokeLater(() -> {
+			Game gameInstance = new Game();
+			gameInstance.setVisible(true);
+		});
+	}
 
-    gameTick();
+	/****** end of Main *********************************/
 
-   }
+	/********************* Animate - Gameloop ************************/
+	/******* This section is where the games state is updated. *******/
+	/*****************************************************************/
+	public void animate() {
 
-   this.repaint(); // update the screen
-  }
+		// Intialize functions
 
- }
+		while (true) {
 
- /****** End of Animate *********************************/
+			if (gameState == 0) {
 
- // Inner class - JPanel
- private class GameAreaPanel extends JPanel {
+				menuTick();
 
-  /************************** PaintComponenet ************************/
-  /** This section is where the screen is drawn **/
-  /*******************************************************************/
-  public void paintComponent(Graphics g) {
-   super.paintComponent(g); // required
-   setDoubleBuffered(true);
+			} else if (gameState == 1) { // Game State
 
-   // Call render methods
-   if (gameState == 0) {
-    menuRender(g);
+				gameTick();
 
-   } else if (gameState == 1) { // Game State
-    gameRender(g);
+			}
 
-   }
-  }
- }
+			this.repaint(); // update the screen
+		}
 
- /****** End of paintComponent *********************************/
+	}
 
- public void menuInit() {
+	/****** End of Animate *********************************/
 
- }
+	// Inner class - JPanel
+	private class GameAreaPanel extends JPanel {
 
- public void gameInit() {
+		/************************** PaintComponenet ************************/
+		/** This section is where the screen is drawn **/
+		/*******************************************************************/
 
- }
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g); // required
+			setDoubleBuffered(true);
 
- // Updating
- public void menuTick() {
+			// Call render methods
+			if (gameState == 0) {
+				menuRender(g);
 
- }
+			} else if (gameState == 1) { // Game State
+				gameRender(g);
 
- public void gameTick() {
-  
-  
-  try {
-   Thread.sleep(33); // 16 = 60fps, 33 = 30fps
-  } catch (Exception exc) {
+			}
+		}
+	}
 
-  } // delay
+	/****** End of paintComponent *********************************/
 
- }
+	public void menuInit() {
 
- // Rendering
- public void menuRender(Graphics g) {
+	}
 
-  Font font = new Font("Serif", Font.PLAIN, 50);
-  g.setFont(font);
-  g.drawString("Epic Menu\n Click mouse to play game", 10, 60);
+	public void gameInit() {
 
- }
+	}
 
- public void gameRender(Graphics g) {
-  player.drawSprite(g);
-  player.moveProjectile();
-  player.drawPlayerProjectile(g);
-  
- }
+	// Updating
+	public void menuTick() {
 
- // Method to change the states of the game and intialize the things needed.
- public void changeState(int a) {
+	}
 
-  gameState = a;
+	public void gameTick() {
+		
+		double xMove = 0;
+		double yMove = 0;
 
-  if (gameState == 0) {
-   menuInit();
-  } else if (gameState == 1) {
-   gameInit();
-  }
+		if (up) {
+			yMove += 1;
+		}
 
- }
+		if (down) {
+			yMove -= 1;
+		}
 
- /***************************** Key Listener ************************/
- /** This section is where keyboard input is handled **/
- /** You will add code to respond to key presses **/
- /*******************************************************************/
- class MyKeyListener implements KeyListener {
+		if (left) {
+			xMove -= 1;
+		}
 
-  public void keyPressed(KeyEvent e) {
-         //System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
-        
-    if (KeyEvent.getKeyText(e.getKeyCode()).equals("W")) {  
-      player.moveUp(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("S")) {  
-      player.moveDown(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {  
-      player.moveLeft(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  
-      player.moveRight(50);
-    } 
-        /*
-         if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  //If 'D' is pressed
-           
-         }
-         */  
-           
-           
-           
+		if (right) {
+			xMove += 1;
+		}
+
+		
+		double hype = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
+		
+		if (hype != 0) {
+		
+			player.moveRight(xMove/hype*10);
+		
+			player.moveUp(yMove/hype*10);
+		
+		}
+		
+		try {
+			Thread.sleep(16); // 16 = 60fps, 33 = 30fps
+		} catch (Exception exc) {
+
+		} // delay
+
+	}
+
+	// Rendering
+	public void menuRender(Graphics g) {
+
+		Font title = new Font("Serif", Font.PLAIN, 50);
+		g.setFont(title);
+		g.drawString("Epic Menu\n Click mouse to play game", 10, 60);
+
+	}
+
+	public int getRandomNumber(int min, int max) {
+		return (int) ((Math.random() * (max - min)) + min);
+	}
+
+	public void gameRender(Graphics g) {
+		
+		Font health = new Font("Serif", Font.PLAIN, 20);
+		g.setFont(health);
+		g.drawString("Health: " + player.getHealth(), 10, 30);
+		g.drawString("Eny Health: " + enemyList.get(0).getHealth(), 10, 90);
+		
+		player.drawSprite(g);
+		player.moveProjectile();
+		player.drawPlayerProjectile(g);
+
+		for (int i = 0; i < enemyList.size(); i++) {
+			(enemyList.get(i)).drawEnemy(g);
+			(enemyList.get(i)).getHit(player);
+			(enemyList.get(i)).moveProjectile();
+			(enemyList.get(i)).drawEnemyProjectile(g);
+
+			if (getRandomNumber(1, 50) == 1) {
+				(enemyList.get(i)).shoot(player);
+			}
+
+		}
+
+	}
+
+	// Method to change the states of the game and intialize the things needed.
+	public void changeState(int a) {
+
+		gameState = a;
+
+		if (gameState == 0) {
+			menuInit();
+		} else if (gameState == 1) {
+			gameInit();
+		}
+
+	}
+
+	/***************************** Key Listener ************************/
+	/** This section is where keyboard input is handled **/
+	/** You will add code to respond to key presses **/
+	/*******************************************************************/
+	class MyKeyListener implements KeyListener {
+
+		public void keyPressed(KeyEvent e) {
+			// System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
+
+			if (e.getKeyCode() == 'W') {
+				up = true;
+			}
+			if (e.getKeyCode() == 'S') {
+				down = true;
+			}
+			if (e.getKeyCode() == 'A') {
+				left = true;
+			}
+			if (e.getKeyCode() == 'D') {
+				right = true;
+			}
+			/*
+			 * if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) { //If 'D' is pressed
+			 * 
+			 * }
+			 */
+
 //         } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //If ESC is pressed
 //           System.out.println("YIKES ESCAPE KEY!"); //close frame & quit
 //           System.exit(0);
 //         } 
-       }   
-       
-       public void keyTyped(KeyEvent e) {  
-       }
-       public void keyReleased(KeyEvent e) {
-       }
- }
+		}
 
- /****** Key Listener *********************************/
+		public void keyTyped(KeyEvent e) {
+		}
 
- /**************************** Mouse Listener ************************/
- /** This section is where mouse input is handled **/
- /** You may have to add code to respond to mouse clicks **/
- /********************************************************************/
- class MyMouseListener implements MouseListener {
+		public void keyReleased(KeyEvent e) {
 
-  public void mouseClicked(MouseEvent e) {
-   System.out.println("Mouse Clicked");
-   System.out.println("X:" + e.getX() + " y:" + e.getY());
+			if (e.getKeyCode() == 'W') {
+				up = false;
+			}
+			if (e.getKeyCode() == 'S') {
+				down = false;
+			}
+			if (e.getKeyCode() == 'A') {
+				left = false;
+			}
+			if (e.getKeyCode() == 'D') {
+				right = false;
+			}
+		}
+	}
 
-   if (gameState == 0) {
-    changeState(1);
-   } else if (gameState == 1){
-     player.shoot(e.getX(), e.getY());
-   }
+	/****** Key Listener *********************************/
 
-  }
+	/**************************** Mouse Listener ************************/
+	/** This section is where mouse input is handled **/
+	/** You may have to add code to respond to mouse clicks **/
+	/********************************************************************/
+	class MyMouseListener implements MouseListener {
 
-  public void mousePressed(MouseEvent e) {
-  }
+		public void mouseClicked(MouseEvent e) {
 
-  public void mouseReleased(MouseEvent e) {
-  }
+		}
 
-  public void mouseEntered(MouseEvent e) {
-  }
+		public void mousePressed(MouseEvent e) {
 
-  public void mouseExited(MouseEvent e) {
-  }
- }
+			
+			System.out.println("Mouse Clicked");
+			System.out.println("X:" + e.getX() + " y:" + e.getY());
 
- /****** Mouse Listener *********************************/
+			if (gameState == 0) {
+				changeState(1);
+			} else if (gameState == 1) {
+				player.shoot(e.getX() - 7, e.getY()- 30);
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
+	}
+
+	/****** Mouse Listener *********************************/
 }
