@@ -14,28 +14,32 @@ abstract class Entity extends GameObject implements Moveable{
     return this.health;
   }
   
+  public void setHealth(double health){
+	   this.health = health;
+  }
+  
   //Move Left
-  public void moveLeft(int n) {
+  public void moveLeft(double n) {
     this.setX(this.getX()-n);
   }
 
   //Move Right
-  public void moveRight(int n) {
+  public void moveRight(double n) {
     this.setX(this.getX()+n);
   }
   
   //Move Up
-  public void moveUp(int n) {
+  public void moveUp(double n) {
     this.setY(this.getY()-n);
   }
   
   //Move Down
-  public void moveDown(int n) {
+  public void moveDown(double n) {
     this.setY(this.getY()+n);
   }
   
   //Constructor
-  Entity(int x, int y, int width, int height, String name, double health){
+  Entity(double x, double y, int width, int height, String name, double health){
   //Entity(int x, int y, int width, int height, BufferedImage sprite, String name, double health){
     super(x, y, width,  height, name);
     //super(x, y, width,  height, sprite, name);
