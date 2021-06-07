@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 
 class Enemy extends Character {
 
-	static ArrayList<Projectile> enemyProjectiles = new ArrayList<Projectile>();
+	public ArrayList<Projectile> enemyProjectiles;
 
 	private Player player;
 
@@ -41,18 +41,18 @@ class Enemy extends Character {
 
 		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp) * 20);
-		double yChange = ((yDifference / hyp) * 20);
+		double xChange = ((xDifference / hyp)*10);
+		double yChange = ((yDifference / hyp)*10);
 
 		enemyProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
 	}
 
 	public void moveProjectile() {
 
-		for (int i = 0; i < enemyProjectiles.size(); i++) {
+		for (int i = 0; i < this.enemyProjectiles.size(); i++) {
 
-			(enemyProjectiles.get(i)).moveUp((enemyProjectiles.get(i)).getChangeY());
-			(enemyProjectiles.get(i)).moveLeft((enemyProjectiles.get(i)).getChangeX());
+			(this.enemyProjectiles.get(i)).moveUp((this.enemyProjectiles.get(i)).getChangeY());
+			(this.enemyProjectiles.get(i)).moveLeft((this.enemyProjectiles.get(i)).getChangeX());
 
 		}
 
@@ -69,6 +69,9 @@ class Enemy extends Character {
 		// double health, String weapon, Player player){
 		super(x, y, width, height, name, health, weapon);
 		// super(x, y, width, height, sprite, name, health, weapon);
+		
+		enemyProjectiles = new ArrayList<Projectile>();
+		 
 	}
 
 }
