@@ -90,6 +90,8 @@ public class Game extends JFrame {
   /********************* Main Method ************************/
   public static void main(String[] args) {
     
+    spawnMobs();
+    
     System.out.println("?>?");
     
     EventQueue.invokeLater(() -> {
@@ -164,11 +166,18 @@ public class Game extends JFrame {
   
   public void gameInit() {
     player.setHealth(100);
-    enemyList.clear();
-    spawnMobs();
+    
+    if (enemyList.size() != 0){
+      enemyList.clear();
+      spawnMobs();
+    }
+    else if (enemyList.size() == 0){
+      spawnMobs();
+    }
+    
   }
   
-  public void spawnMobs() {
+  public static void spawnMobs() {
     enemyList.add(new Enemy(200, 400, 50, 50, "Enemy", 100, "idk", player));
     enemyList.add(new Enemy(400, 400, 50, 50, "Enemy", 100, "idk", player));
     enemyList.add(new Enemy(200, 200, 50, 50, "Enemy", 100, "idk", player));
