@@ -14,13 +14,11 @@ class HealthPack extends Pickups {
 	}
 
 	public void drawItem(Graphics g) {
-		g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
+		g.fillRect((int) getX() - getWidth()/2, (int) getY() - getHeight()/2, getWidth(), getHeight());
 	}
 
-	public boolean checkCollision(HealthPack a, Player p) {
-		if ((a.getX() >= p.getX() - p.getWidth()) && (a.getX() <= p.getX() + p.getWidth())
-				&& (a.getY() >= p.getY() - p.getHeight()) && (a.getY() <= p.getY() + p.getHeight())) {
-			p.setHealth(p.getHealth() + 100);
+	public boolean checkCollision(Player p) {
+		if (this.getCollision().intersects(p.getCollision())) {
 			return true;
 		}
 		

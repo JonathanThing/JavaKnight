@@ -11,8 +11,6 @@ class Player extends Character {
 
 	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
 
-	
-	
 	// sprite
 	private BufferedImage sprite;
 
@@ -76,7 +74,7 @@ class Player extends Character {
 		playerProjectiles.remove(i);
 	}
 
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList <Enemy> list) {
+	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
 
 		double xMove = 0;
 		double yMove = 0;
@@ -103,14 +101,14 @@ class Player extends Character {
 
 			this.moveRight((xMove / hyp) * 10);
 
-			if (collision(list)) {
+			if (collision(list, map)) {
 
 				this.moveLeft((xMove / hyp) * 10);
 			}
 
 			this.moveUp((yMove / hyp) * 10);
-			
-			if (collision(list)) {
+
+			if (collision(list, map)) {
 
 				this.moveDown((yMove / hyp) * 10);
 
@@ -118,29 +116,34 @@ class Player extends Character {
 
 		}
 
-		
-
 	}
 
-	public boolean collision(ArrayList <Enemy> a) {
-		
+	public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
+
 		for (int i = 0; i < a.size(); i++) {
 			if (this.getCollision().intersects(a.get(i).getCollision())) {
 				return true;
 			}
 		}
-		
+
+		for (int i = 0; i < b.length; i++) {
+			for (int j = 0; j < b[0].length; j++) {
+				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
-	
+
 	public boolean wasHit(Enemy a) {
-		
+
 		for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
 
 			if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
 
 				a.enemyProjectiles.remove(i);
-				
+
 				return true;
 			}
 
@@ -148,8 +151,7 @@ class Player extends Character {
 
 		return false;
 	}
-	
-	
+
 	// constructor
 	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
 		// Player(int x, int y, int width, int height, BufferedImage sprite, String

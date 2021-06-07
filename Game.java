@@ -27,8 +27,8 @@ public class Game extends JFrame {
 	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
 	static ArrayList<HealthPack> healthPacks = new ArrayList<HealthPack>();
 
-	static double playerX = 50;
-	static double playerY = 50;
+	static double playerX = 120;
+	static double playerY = 120;
 
 	static int thingX, thingY;
 
@@ -38,6 +38,7 @@ public class Game extends JFrame {
 	/** The variables can be accessed across all methods **/
 	/******************************************************/
 
+	static Environment[][] map = new Environment[8][8];
 	static GameAreaPanel gamePanel;
 	static Graphics g;
 	static int gameState = 0; // 0 = Menu, 1 = Game
@@ -90,11 +91,7 @@ public class Game extends JFrame {
 	/********************* Main Method ************************/
 	public static void main(String[] args) {
 
-		enemyList.add(new Enemy(200, 400, 50, 50, "Enemy", 100, "idk", player));
-		enemyList.add(new Enemy(400, 400, 50, 50, "Enemy", 100, "idk", player));
-		enemyList.add(new Enemy(200, 200, 50, 50, "Enemy", 100, "idk", player));
-		enemyList.add(new Enemy(600, 300, 50, 50, "Enemy", 100, "idk", player));
-		
+		enemyList.add(new Enemy(1000, 300, 50, 50, "Enemy", 100, "idk", player));
 		System.out.println("?>?");
 
 		EventQueue.invokeLater(() -> {
@@ -112,9 +109,6 @@ public class Game extends JFrame {
 
 		// Intialize functions
 
-		
-		
-		
 		while (true) {
 
 			if (gameState == 0) {
@@ -164,21 +158,38 @@ public class Game extends JFrame {
 
 	public void gameInit() {
 
+		char[][] temp = { 	{ 'w', 'w', 'w', 'w', 'w', 'w', 'w', 'w' },
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', 'w'},
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', 'w'},
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', 'w'},
+							{ 'w', ' ', ' ', ' ', ' ', ' ', ' ', 'w'},
+							{ 'w', 'w', 'w', ' ', ' ', 'w', 'w', 'w' }};
+
+		for (int i = 0; i < temp.length; i++) {
+			for (int j = 0; j < temp[0].length; j++) {
+				if (temp[i][j] == 'w') {
+					map[i][j] = new Wall((int)i * 64 + 64/2, (int) j * 64 + 64/2, "wall");
+
+				}
+			}
+		}
+
 	}
 
 	// Updating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
-	//Menu update
+
+	// Menu update
 	public void menuTick() {
 
 	}
 
-	
-	//Game update
+	// Game update
 	public void gameTick() {
 
-		player.movement(up, down, left, right, enemyList);
-		
+		player.movement(up, down, left, right, enemyList, map);
+
 		player.moveProjectile();
 
 		// Enemy
@@ -187,12 +198,12 @@ public class Game extends JFrame {
 			(enemyList.get(i)).moveProjectile();
 
 			if (player.wasHit(enemyList.get(i))) {
-				player.setHealth(player.getHealth()-5);
+				player.setHealth(player.getHealth() - 5);
 			}
-			
+
 			if ((enemyList.get(i)).getHit(player)) {
 //				player.removeProjectile(i); //WARNING DOES NOT WORK WILL NEED TO CREATE ID FOR EACH BULLET TO KNOW WHEN IT GET IT
-				enemyList.get(i).setHealth(enemyList.get(i).getHealth() - 5);
+				enemyList.get(i).setHealth(enemyList.get(i).getHealth() - 10);
 			}
 
 			if ((enemyList.get(i)).getHealth() == 0) {
@@ -209,7 +220,7 @@ public class Game extends JFrame {
 		// HealthPack
 		for (int i = 0; i < healthPacks.size(); i++) {
 
-			if ((healthPacks.get(i)).checkCollision(healthPacks.get(i), player)) {
+			if ((healthPacks.get(i)).checkCollision(player)) {
 				healthPacks.remove(i);
 				break;
 			}
@@ -225,8 +236,8 @@ public class Game extends JFrame {
 	}
 
 	// Rendering ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
-	//Rendering the Menu
+
+	// Rendering the Menu
 	public void menuRender(Graphics g) {
 
 		Font title = new Font("Serif", Font.PLAIN, 50);
@@ -235,17 +246,19 @@ public class Game extends JFrame {
 
 	}
 
-	//Rendering the Game
+	// Rendering the Game
 	public void gameRender(Graphics g) {
 
-		Font health = new Font("Serif", Font.PLAIN, 20);
-		g.setFont(health);
-		g.drawString("Health: " + player.getHealth(), 10, 30);
-
-		for (int i = 0; i < enemyList.size(); i++) {
-			g.drawString("Eny Health: " + enemyList.get(i).getHealth(), 10, 90 + i*25);
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[i][j] == null) {
+					
+				} else {
+					map[i][j].draw(g);
+				}
+			}
 		}
-
+		
 		player.drawSprite(g);
 
 		player.drawPlayerProjectile(g);
@@ -259,6 +272,17 @@ public class Game extends JFrame {
 			(enemyList.get(i)).drawEnemyProjectile(g);
 
 		}
+
+		
+		
+		Font health = new Font("Serif", Font.PLAIN, 20);
+		g.setFont(health);
+		g.drawString("Health: " + player.getHealth(), 10, 30);
+	
+		for (int i = 0; i < enemyList.size(); i++) {
+			g.drawString("Eny Health: " + enemyList.get(i).getHealth(), 10, 90 + i * 25);
+		}
+		
 	}
 
 	// Method to change the states of the game and intialize the things needed.
@@ -289,6 +313,14 @@ public class Game extends JFrame {
 			if (e.getKeyChar() == 'e') {
 				healthPacks.add(new HealthPack(500, 500, 50, 50, "HP"));
 				System.out.print("E Is Typed");
+			}
+			
+			if (e.getKeyChar() == 'm') {
+				changeState(0);
+			}
+			
+			if (e.getKeyChar() == 'n') {
+				changeState(1);
 			}
 
 		}
