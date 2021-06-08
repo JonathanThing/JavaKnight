@@ -42,10 +42,10 @@ class Enemy extends Character {
 
 		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp)*10);
-		double yChange = ((yDifference / hyp)*10);
+		double xChange = ((xDifference / hyp)*5);
+		double yChange = ((yDifference / hyp)*5);
 
-		enemyProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
+		enemyProjectiles.add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange, yChange));
 	}
 
 	public void moveProjectile() {
