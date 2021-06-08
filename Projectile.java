@@ -6,22 +6,22 @@ import java.awt.Rectangle;
 
 class Projectile extends Entity{
   
-  private int changeX;
-  private int changeY;
+  private double changeX;
+  private double changeY;
   
-  public int getChangeX(){
+  public double getChangeX(){
     return this.changeX;
   }
   
-  public int getChangeY(){
+  public double getChangeY(){
     return this.changeY;
   }
   
-  public void drawProjectile(Graphics g){
-    g.fillRect(getX(),getY(), getWidth(), getHeight());
-  }
+  public void draw(Graphics g, double offSetX, double offSetY) {
+	  g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+	}
     
-  Projectile(int x, int y, int width, int height,String name, int health, int changeX, int changeY){
+  Projectile(double x, double y, int width, int height,String name, int health, double changeX, double changeY){
   //Projectile(int x, int y, int width, int height, BufferedImage sprite, String name, int changeX, int changeY){
     super(x, y, width, height, name, health);
     //super(x, y, width,  height, sprite, name);
