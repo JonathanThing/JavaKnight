@@ -45,10 +45,10 @@ class Player extends Character {
 
 		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp) * 60);
-		double yChange = ((yDifference / hyp) * 60);
+		double xChange = ((xDifference / hyp) * 30);
+		double yChange = ((yDifference / hyp) * 30);
 
-		playerProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
+		playerProjectiles.add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange, yChange));
 	}
 
 	// move projectiles
@@ -99,18 +99,18 @@ class Player extends Character {
 
 		if (hyp != 0) {
 
-			this.moveRight((xMove / hyp) * 10);
+			this.moveRight((xMove / hyp) * 5);
 
 			if (collision(list, map)) {
 
-				this.moveLeft((xMove / hyp) * 10);
+				this.moveLeft((xMove / hyp) * 5);
 			}
 
-			this.moveUp((yMove / hyp) * 10);
+			this.moveUp((yMove / hyp) * 5);
 
 			if (collision(list, map)) {
 
-				this.moveDown((yMove / hyp) * 10);
+				this.moveDown((yMove / hyp) * 5);
 
 			}
 

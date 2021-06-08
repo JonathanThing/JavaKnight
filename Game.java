@@ -34,8 +34,7 @@ public class Game extends JFrame {
 	static double playerY = 120;
 
 	static int thingX, thingY;
-
-	static Player player = new Player(playerX, playerY, 50, 50, "player", 100, "sword", 50);
+	static Player player; 
 
 	/****************** CLASS VARIABLES *******************/
 	/** The variables can be accessed across all methods **/
@@ -69,7 +68,7 @@ public class Game extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Set resolution 1280x780
-		this.setSize(1280, 780);
+		this.setSize(1280, 720);
 
 		// Prevent resizing of the tab
 		this.setResizable(false);
@@ -116,16 +115,20 @@ public class Game extends JFrame {
 			for (int j = 0; j < temp[0].length; j++) {
 				switch (temp[i][j]) {
 				case 'w':
-					map[i][j] = new Wall((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, "wall");
+					map[i][j] = new Wall((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, "wall");
 					break;
 
 				case 'e':
-					enemyList.add(new Enemy((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, 50, 50, "Enemy", 100, "idk",
+					enemyList.add(new Enemy((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, 25, 25, "Enemy", 100, "idk",
 							player));
 					break;
 
 				case 'h':
-					healthPacks.add(new HealthPack((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, 50, 50, "HP"));
+					healthPacks.add(new HealthPack((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "HP"));
+					break;
+					
+				case 'p':
+					player = new Player((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "player", 100, "sword", 50);
 					break;
 				}
 			}
@@ -230,7 +233,7 @@ public class Game extends JFrame {
 
 	public void gameInit() {
 		offsetMaxX = worldSizeX - 1280;
-		offsetMaxY = worldSizeY - 780;
+		offsetMaxY = worldSizeY - 720;
 		offsetMinX = 0;
 		offsetMinY = 0;
 	}
@@ -247,7 +250,7 @@ public class Game extends JFrame {
 		
 		
 		camX = player.getX() - 1280 / 2;
-		camY = player.getY() - 780/ 2;
+		camY = player.getY() - 720/ 2;
 		
 		if (camX > offsetMaxX) {
 		    camX = offsetMaxX;
