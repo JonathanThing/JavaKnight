@@ -12,10 +12,9 @@ class Enemy extends Character {
 
 	private Player player;
 
-	public void draw(Graphics g, double offSetX, double offSetY) {
+	public void drawEnemy(Graphics g) {
 
-		g.setColor(Color.RED);
-		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+		g.fillRect((int) getX() - getWidth() / 2, (int) getY() - getHeight() / 2, getWidth(), getHeight());
 	}
 
 	public boolean getHit(Player player) {
@@ -59,9 +58,9 @@ class Enemy extends Character {
 
 	}
 
-	public void drawEnemyProjectile(Graphics g, double offSetX, double offSetY) {
+	public void drawEnemyProjectile(Graphics g) {
 		for (int i = 0; i < enemyProjectiles.size(); i++) {
-			(enemyProjectiles.get(i)).draw(g, offSetX, offSetY);
+			(enemyProjectiles.get(i)).drawProjectile(g);
 		}
 	}
 

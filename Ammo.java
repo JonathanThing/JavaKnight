@@ -20,11 +20,5 @@ class Ammo extends Items {
     super(x, y, width,  height, name);
     this.ammoValue = ammoValue;
   }
-
-@Override
-public void draw(Graphics g, double offSetX, double offSetY) {
-	// TODO Auto-generated method stub
-	
-}
   
 }

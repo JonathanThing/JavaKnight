@@ -47,10 +47,4 @@ class Weapon extends Items{
     this.ammoType = ammoType;
   }
 
-@Override
-public void draw(Graphics g, double offSetX, double offSetY) {
-	// TODO Auto-generated method stub
-	
-}
-
 }

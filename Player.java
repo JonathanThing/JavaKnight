@@ -11,6 +11,8 @@ class Player extends Character {
 
 	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
 
+	
+	
 	// sprite
 	private BufferedImage sprite;
 
@@ -33,9 +35,9 @@ class Player extends Character {
 	}
 
 	// draw
-	public void draw(Graphics g, double offSetX, double offSetY) {
-
-		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+	public void drawSprite(Graphics g) {
+//  g.drawImage(sprite, (int) getX(), (int) getY(), null);
+		g.drawRect((int) getX() - getWidth() / 2, (int) getY() - getHeight() / 2, getWidth(), getHeight());
 	}
 
 	// create projectiles
@@ -64,9 +66,9 @@ class Player extends Character {
 	}
 
 	// draw projectiles
-	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
+	public void drawPlayerProjectile(Graphics g) {
 		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
+			(playerProjectiles.get(i)).drawProjectile(g);
 		}
 	}
 
@@ -74,7 +76,7 @@ class Player extends Character {
 		playerProjectiles.remove(i);
 	}
 
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
+	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList <Enemy> list) {
 
 		double xMove = 0;
 		double yMove = 0;
@@ -101,14 +103,14 @@ class Player extends Character {
 
 			this.moveRight((xMove / hyp) * 10);
 
-			if (collision(list, map)) {
+			if (collision(list)) {
 
 				this.moveLeft((xMove / hyp) * 10);
 			}
 
 			this.moveUp((yMove / hyp) * 10);
-
-			if (collision(list, map)) {
+			
+			if (collision(list)) {
 
 				this.moveDown((yMove / hyp) * 10);
 
@@ -116,34 +118,29 @@ class Player extends Character {
 
 		}
 
+		
+
 	}
 
-	public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
-
+	public boolean collision(ArrayList <Enemy> a) {
+		
 		for (int i = 0; i < a.size(); i++) {
 			if (this.getCollision().intersects(a.get(i).getCollision())) {
 				return true;
 			}
 		}
-
-		for (int i = 0; i < b.length; i++) {
-			for (int j = 0; j < b[0].length; j++) {
-				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
-					return true;
-				}
-			}
-		}
+		
 		return false;
 	}
-
+	
 	public boolean wasHit(Enemy a) {
-
+		
 		for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
 
 			if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
 
 				a.enemyProjectiles.remove(i);
-
+				
 				return true;
 			}
 
@@ -151,7 +148,8 @@ class Player extends Character {
 
 		return false;
 	}
-
+	
+	
 	// constructor
 	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
 		// Player(int x, int y, int width, int height, BufferedImage sprite, String

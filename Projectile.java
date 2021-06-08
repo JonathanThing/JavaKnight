@@ -17,9 +17,9 @@ class Projectile extends Entity{
     return this.changeY;
   }
   
-  public void draw(Graphics g, double offSetX, double offSetY) {
-	  g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
+  public void drawProjectile(Graphics g){
+    g.fillRect((int) getX() - getWidth()/2, (int) getY() - getHeight()/2, getWidth(), getHeight());
+  }
     
   Projectile(double x, double y, int width, int height,String name, int health, double changeX, double changeY){
   //Projectile(int x, int y, int width, int height, BufferedImage sprite, String name, int changeX, int changeY){
