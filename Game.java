@@ -100,54 +100,63 @@ public class Game extends JFrame {
 		
 		for (int i = 0; i < temp.length; i++) {
 			for (int j = 0; j < temp[0].length; j++) {
-				if (temp[i][j] == 'w') {
-					
+				switch (temp[i][j]) {
+				case 'w':
 					map[i][j] = new Wall((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, "wall");
-				} else if (temp[i][j] == 'e') {
-					enemyList.add(new Enemy(j * 64 + 64 / 2, (int) i* 64 + 64 / 2, 50, 50, "Enemy", 100, "idk", player));
+					break;
+				
+				case 'e':
+					enemyList.add(new Enemy((int)j * 64 + 64 / 2, (int) i* 64 + 64 / 2, 50, 50, "Enemy", 100, "idk", player));
+					break;
+					
+				case 'h':
+					healthPacks.add(new HealthPack((int)j * 64 + 64 / 2, (int) i* 64 + 64 / 2, 50, 50, "HP"));
+					break;
 				}
 			}
 		}
-		
-		System.out.println("?>?");
 
-		EventQueue.invokeLater(() -> {
+	System.out.println("?>?");
+
+	EventQueue.invokeLater(()->
+
+	{
 			Game gameInstance = new Game();
 			gameInstance.setVisible(true);
 		});
 	}
 
 	public static char[][] getMap(String file) throws Exception {
-		
-		File myFile = new File(file); 
-	    
-	    //output to message to the user via the console
-	    System.out.println("Attempting to read data from file."); 
 
-	    // Create a Scanner and associate it with the file
-	    Scanner input = new Scanner(myFile);   
-	    
-	    int x = input.nextInt();
-	    int y = input.nextInt();
-	    String thing = "";
-	    
-	    input.nextLine();
-	    
-	    char [][] a = new char [y][x];
-	    
-	    for (int i = 0; i < y; i++) {
-	    	thing = input.nextLine();
-	    	for (int j = 0; j < x; j ++) {
-	    		a [i][j] = thing.charAt(j);
-	    		
-	    	}
-	    	
-	    }
-	    
-	    return a;
-	    
+		File myFile = new File(file);
+
+		// output to message to the user via the console
+		System.out.println("Attempting to read data from file.");
+
+		// Create a Scanner and associate it with the file
+		Scanner input = new Scanner(myFile);
+
+		int x = input.nextInt();
+		int y = input.nextInt();
+		String thing = "";
+
+		input.nextLine();
+
+		char[][] a = new char[y][x];
+
+		for (int i = 0; i < y; i++) {
+			thing = input.nextLine();
+			for (int j = 0; j < x; j++) {
+				a[i][j] = thing.charAt(j);
+
+			}
+
+		}
+
+		return a;
+
 	}
-	
+
 	/****** end of Main *********************************/
 
 	/********************* Animate - Gameloop ************************/
@@ -205,7 +214,6 @@ public class Game extends JFrame {
 	}
 
 	public void gameInit() {
-	
 
 	}
 
@@ -252,6 +260,7 @@ public class Game extends JFrame {
 		for (int i = 0; i < healthPacks.size(); i++) {
 
 			if ((healthPacks.get(i)).checkCollision(player)) {
+				player.setHealth(player.getHealth()+100);
 				healthPacks.remove(i);
 				break;
 			}
@@ -333,9 +342,6 @@ public class Game extends JFrame {
 
 		return (int) ((Math.random() * (max - min)) + min);
 	}
-	
-	
-	
 
 	/***************************** Key Listener ************************/
 	/** This section is where keyboard input is handled **/

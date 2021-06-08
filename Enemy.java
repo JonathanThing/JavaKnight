@@ -14,6 +14,7 @@ class Enemy extends Character {
 
 	public void drawEnemy(Graphics g) {
 
+		g.setColor(Color.RED);
 		g.fillRect((int) getX() - getWidth() / 2, (int) getY() - getHeight() / 2, getWidth(), getHeight());
 	}
 
