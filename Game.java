@@ -1,5 +1,6 @@
 
 //Graphics &GUI imports
+import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
@@ -15,12 +16,23 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
+//Import ArrayList
+import java.util.ArrayList;
+
+//Import Math
+import java.lang.Math;
+
 public class Game extends JFrame {
-  
- int playerX = 50;
- int playerY = 50;
- 
- Player player = new Player(playerX,playerY,100,50,"player",100,"sword",50);
+
+ static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
+ static ArrayList<HealthPack> healthPacks = new ArrayList<HealthPack>();
+
+ static double playerX = 50;
+ static double playerY = 50;
+
+ static int thingX, thingY;
+
+ static Player player = new Player(playerX, playerY, 50, 50, "player", 100, "sword", 50);
 
  /****************** CLASS VARIABLES *******************/
  /** The variables can be accessed across all methods **/
@@ -29,13 +41,14 @@ public class Game extends JFrame {
  static GameAreaPanel gamePanel;
  static Graphics g;
  static int gameState = 0; // 0 = Menu, 1 = Game
- 
+ static boolean up, down, left, right;
 
  /***************************************************************/
  /** GameFrame - Setups up the Window and Starts displaying it **/
  /***************************************************************/
 
  Game() {
+
   super("My Game");
 
   // Set the frame to full screen
@@ -43,6 +56,9 @@ public class Game extends JFrame {
 
   // Set resolution 1280x780
   this.setSize(1280, 780);
+
+  // Prevent resizing of the tab
+  this.setResizable(false);
 
   // Create Game panel for rendering
   gamePanel = new GameAreaPanel();
@@ -73,6 +89,12 @@ public class Game extends JFrame {
 
  /********************* Main Method ************************/
  public static void main(String[] args) {
+
+  enemyList.add(new Enemy(200, 400, 50, 50, "Enemy", 100, "idk", player));
+  enemyList.add(new Enemy(400, 400, 50, 50, "Enemy", 100, "idk", player));
+  //enemyList.add(new Enemy(200, 200, 50, 50, "Enemy", 100, "idk", player));
+  //enemyList.add(new Enemy(600, 300, 50, 50, "Enemy", 100, "idk", player));
+  
   System.out.println("?>?");
 
   EventQueue.invokeLater(() -> {
@@ -90,6 +112,9 @@ public class Game extends JFrame {
 
   // Intialize functions
 
+  
+  
+  
   while (true) {
 
    if (gameState == 0) {
@@ -115,6 +140,7 @@ public class Game extends JFrame {
   /************************** PaintComponenet ************************/
   /** This section is where the screen is drawn **/
   /*******************************************************************/
+
   public void paintComponent(Graphics g) {
    super.paintComponent(g); // required
    setDoubleBuffered(true);
@@ -140,36 +166,105 @@ public class Game extends JFrame {
 
  }
 
- // Updating
+ // Updating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ //Menu update
  public void menuTick() {
 
  }
 
+ 
+ //Game update
  public void gameTick() {
+
+  player.movement(up, down, left, right, enemyList);
   
+  player.moveProjectile();
+
+  // Enemy
+  
+  for (int i = 0; i < enemyList.size(); i++) {
+
+   (enemyList.get(i)).moveProjectile();
+   
+   if (player.wasHit(enemyList.get(i))) {
+     (enemyList.get(i)).removeProjectile(player);
+     player.setHealth(player.getHealth()-5);
+   }
+   
+   if ((enemyList.get(i)).getHit(player)) {
+     player.removeProjectile(enemyList.get(i));
+     enemyList.get(i).setHealth(enemyList.get(i).getHealth() - 5);
+   }
+
+   if ((enemyList.get(i)).getHealth() == 0) {
+    enemyList.remove(i);
+    break;
+   }
+
+   if (getRandomNumber(1, 50) == 1) {
+    (enemyList.get(i)).shoot(player);
+   }
+
+  }
+
+
+  // HealthPack
+  
+  for (int i = 0; i < healthPacks.size(); i++) {
+
+   if ((healthPacks.get(i)).checkCollision(healthPacks.get(i), player)) {
+    healthPacks.remove(i);
+    break;
+   }
+
+  }
+
+
   
   try {
-   Thread.sleep(33); // 16 = 60fps, 33 = 30fps
+   Thread.sleep(16); // 16 = 60fps, 33 = 30fps
   } catch (Exception exc) {
 
   } // delay
 
  }
 
- // Rendering
+ // Rendering ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+ //Rendering the Menu
  public void menuRender(Graphics g) {
 
-  Font font = new Font("Serif", Font.PLAIN, 50);
-  g.setFont(font);
+  Font title = new Font("Serif", Font.PLAIN, 50);
+  g.setFont(title);
   g.drawString("Epic Menu\n Click mouse to play game", 10, 60);
 
  }
 
+ //Rendering the Game
  public void gameRender(Graphics g) {
+
+  Font health = new Font("Serif", Font.PLAIN, 20);
+  g.setFont(health);
+  g.drawString("Health: " + player.getHealth(), 10, 30);
+
+  for (int i = 0; i < enemyList.size(); i++) {
+   g.drawString("Eny Health: " + enemyList.get(i).getHealth(), 10, 90 + i*25);
+  }
+
   player.drawSprite(g);
-  player.moveProjectile();
+
   player.drawPlayerProjectile(g);
-  
+  for (int j = 0; j < healthPacks.size(); j++) {
+   healthPacks.get(j).drawItem(g);
+  }
+
+  for (int i = 0; i < enemyList.size(); i++) {
+
+   (enemyList.get(i)).drawEnemy(g);
+   (enemyList.get(i)).drawEnemyProjectile(g);
+
+  }
  }
 
  // Method to change the states of the game and intialize the things needed.
@@ -185,42 +280,56 @@ public class Game extends JFrame {
 
  }
 
+ public int getRandomNumber(int min, int max) {
+  return (int) ((Math.random() * (max - min)) + min);
+ }
+
  /***************************** Key Listener ************************/
  /** This section is where keyboard input is handled **/
  /** You will add code to respond to key presses **/
  /*******************************************************************/
  class MyKeyListener implements KeyListener {
 
+  public void keyTyped(KeyEvent e) {
+
+   if (e.getKeyChar() == 'e') {
+    healthPacks.add(new HealthPack(500, 500, 50, 50, "HP"));
+    System.out.print("E Is Typed");
+   }
+
+  }
+
   public void keyPressed(KeyEvent e) {
-         //System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
-        
-    if (KeyEvent.getKeyText(e.getKeyCode()).equals("W")) {  
-      player.moveUp(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("S")) {  
-      player.moveDown(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("A")) {  
-      player.moveLeft(50);
-    } else if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  
-      player.moveRight(50);
-    } 
-        /*
-         if (KeyEvent.getKeyText(e.getKeyCode()).equals("D")) {  //If 'D' is pressed
-           
-         }
-         */  
-           
-           
-           
-//         } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {  //If ESC is pressed
-//           System.out.println("YIKES ESCAPE KEY!"); //close frame & quit
-//           System.exit(0);
-//         } 
-       }   
-       
-       public void keyTyped(KeyEvent e) {  
-       }
-       public void keyReleased(KeyEvent e) {
-       }
+
+   if (e.getKeyCode() == 'W') {
+    up = true;
+   }
+   if (e.getKeyCode() == 'S') {
+    down = true;
+   }
+   if (e.getKeyCode() == 'A') {
+    left = true;
+   }
+   if (e.getKeyCode() == 'D') {
+    right = true;
+   }
+  }
+
+  public void keyReleased(KeyEvent e) {
+
+   if (e.getKeyCode() == 'W') {
+    up = false;
+   }
+   if (e.getKeyCode() == 'S') {
+    down = false;
+   }
+   if (e.getKeyCode() == 'A') {
+    left = false;
+   }
+   if (e.getKeyCode() == 'D') {
+    right = false;
+   }
+  }
  }
 
  /****** Key Listener *********************************/
@@ -232,18 +341,16 @@ public class Game extends JFrame {
  class MyMouseListener implements MouseListener {
 
   public void mouseClicked(MouseEvent e) {
-   System.out.println("Mouse Clicked");
-   System.out.println("X:" + e.getX() + " y:" + e.getY());
-
-   if (gameState == 0) {
-    changeState(1);
-   } else if (gameState == 1){
-     player.shoot(e.getX(), e.getY());
-   }
 
   }
 
   public void mousePressed(MouseEvent e) {
+
+   if (gameState == 0) {
+    changeState(1);
+   } else if (gameState == 1) {
+    player.shoot(e.getX() - 7, e.getY() - 30); // Mouse offset cause it is very clown lol
+   }
   }
 
   public void mouseReleased(MouseEvent e) {
