@@ -247,7 +247,7 @@ public class Game extends JFrame {
 		
 		
 		camX = player.getX() - 1280 / 2;
-		camY = player.getY() / 2;
+		camY = player.getY() - 780/ 2;
 		
 		if (camX > offsetMaxX) {
 		    camX = offsetMaxX;
@@ -449,7 +449,7 @@ public class Game extends JFrame {
 			if (gameState == 0) {
 				changeState(1);
 			} else if (gameState == 1) {
-				player.shoot(e.getX() - 7, e.getY() - 30); // Mouse offset cause it is very clown lol
+				player.shoot(e.getX() - 7 + camX, e.getY() - 30 + camY); // Mouse offset cause it is very clown lol
 			}
 		}
 
