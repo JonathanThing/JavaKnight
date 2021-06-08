@@ -14,9 +14,10 @@ class HealthPack extends Pickups {
 		super(x, y, width, height, name);
 	}
 
-	public void drawItem(Graphics g) {
+	public void draw(Graphics g, double offSetX, double offSetY) {
+
 		g.setColor(Color.GREEN);
-		g.fillRect((int) getX() - getWidth()/2, (int) getY() - getHeight()/2, getWidth(), getHeight());
+		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
 	}
 
 	public boolean checkCollision(Player p) {

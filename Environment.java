@@ -7,6 +7,4 @@ public abstract class Environment extends GameObject {
 
 	}
 
-	public abstract void draw(Graphics g);
-
 }

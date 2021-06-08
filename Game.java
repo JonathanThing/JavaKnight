@@ -46,7 +46,17 @@ public class Game extends JFrame {
 	static Graphics g;
 	static int gameState = 0; // 0 = Menu, 1 = Game
 	static boolean up, down, left, right;
+	static int offsetMaxX;
+	static int offsetMaxY;
+	static int worldSizeX;
+	static int worldSizeY;
+	static double camX;
+	static double camY;
+	static int offsetMinX = 0;
+	static int offsetMinY = 0;
 
+	
+	
 	/***************************************************************/
 	/** GameFrame - Setups up the Window and Starts displaying it **/
 	/***************************************************************/
@@ -94,9 +104,13 @@ public class Game extends JFrame {
 	/********************* Main Method ************************/
 	public static void main(String[] args) throws Exception {
 
-		char [][] temp = getMap("maps/map1");
+		char[][] temp = getMap("maps/map1");
 
-		map = new Environment [temp.length][temp[0].length];
+		map = new Environment[temp.length][temp[0].length];
+
+		worldSizeX = 64 * temp[0].length;
+		worldSizeY = 64 * temp.length;
+
 		
 		for (int i = 0; i < temp.length; i++) {
 			for (int j = 0; j < temp[0].length; j++) {
@@ -104,23 +118,24 @@ public class Game extends JFrame {
 				case 'w':
 					map[i][j] = new Wall((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, "wall");
 					break;
-				
+
 				case 'e':
-					enemyList.add(new Enemy((int)j * 64 + 64 / 2, (int) i* 64 + 64 / 2, 50, 50, "Enemy", 100, "idk", player));
+					enemyList.add(new Enemy((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, 50, 50, "Enemy", 100, "idk",
+							player));
 					break;
-					
+
 				case 'h':
-					healthPacks.add(new HealthPack((int)j * 64 + 64 / 2, (int) i* 64 + 64 / 2, 50, 50, "HP"));
+					healthPacks.add(new HealthPack((int) j * 64 + 64 / 2, (int) i * 64 + 64 / 2, 50, 50, "HP"));
 					break;
 				}
 			}
 		}
 
-	System.out.println("?>?");
+		System.out.println("?>?");
 
-	EventQueue.invokeLater(()->
+		EventQueue.invokeLater(() ->
 
-	{
+		{
 			Game gameInstance = new Game();
 			gameInstance.setVisible(true);
 		});
@@ -214,7 +229,10 @@ public class Game extends JFrame {
 	}
 
 	public void gameInit() {
-
+		offsetMaxX = worldSizeX - 1280;
+		offsetMaxY = worldSizeY - 780;
+		offsetMinX = 0;
+		offsetMinY = 0;
 	}
 
 	// Updating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -226,6 +244,21 @@ public class Game extends JFrame {
 
 	// Game update
 	public void gameTick() {
+		
+		
+		camX = player.getX() - 1280 / 2;
+		camY = player.getY() / 2;
+		
+		if (camX > offsetMaxX) {
+		    camX = offsetMaxX;
+		}else if (camX < offsetMinX) {
+		    camX = offsetMinX;
+		} 
+		if (camY > offsetMaxY){
+		    camY = offsetMaxY;
+		}else if (camY < offsetMinY){
+		    camY = offsetMinY;
+		}
 
 		player.movement(up, down, left, right, enemyList, map);
 
@@ -260,7 +293,7 @@ public class Game extends JFrame {
 		for (int i = 0; i < healthPacks.size(); i++) {
 
 			if ((healthPacks.get(i)).checkCollision(player)) {
-				player.setHealth(player.getHealth()+100);
+				player.setHealth(player.getHealth() + 100);
 				healthPacks.remove(i);
 				break;
 			}
@@ -294,22 +327,22 @@ public class Game extends JFrame {
 				if (map[i][j] == null) {
 
 				} else {
-					map[i][j].draw(g);
+					map[i][j].draw(g, camX, camY);
 				}
 			}
 		}
 
-		player.drawSprite(g);
+		player.draw(g, camX, camY);
 
-		player.drawPlayerProjectile(g);
+		player.drawPlayerProjectile(g, camX, camY);
 		for (int j = 0; j < healthPacks.size(); j++) {
-			healthPacks.get(j).drawItem(g);
+			healthPacks.get(j).draw(g, camX, camY);
 		}
 
 		for (int i = 0; i < enemyList.size(); i++) {
 
-			(enemyList.get(i)).drawEnemy(g);
-			(enemyList.get(i)).drawEnemyProjectile(g);
+			(enemyList.get(i)).draw(g, camX, camY);
+			(enemyList.get(i)).drawEnemyProjectile(g, camX, camY);
 
 		}
 

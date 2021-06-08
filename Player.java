@@ -33,9 +33,9 @@ class Player extends Character {
 	}
 
 	// draw
-	public void drawSprite(Graphics g) {
-//  g.drawImage(sprite, (int) getX(), (int) getY(), null);
-		g.drawRect((int) getX() - getWidth() / 2, (int) getY() - getHeight() / 2, getWidth(), getHeight());
+	public void draw(Graphics g, double offSetX, double offSetY) {
+
+		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
 	}
 
 	// create projectiles
@@ -64,9 +64,9 @@ class Player extends Character {
 	}
 
 	// draw projectiles
-	public void drawPlayerProjectile(Graphics g) {
+	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
 		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).drawProjectile(g);
+			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
 		}
 	}
 

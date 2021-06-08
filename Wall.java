@@ -8,9 +8,9 @@ public class Wall extends Environment {
 
 	}
 	
-	public void draw(Graphics g) {
-		g.fillRect((int) getX() - getWidth()/2, (int) getY() -  getHeight()/2, getWidth(), getHeight());
-		
+	public void draw(Graphics g, double offSetX, double offSetY) {
+
+		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
 	}
 	
 }
