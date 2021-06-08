@@ -107,8 +107,8 @@ public class Game extends JFrame {
 
 		map = new Environment[temp.length][temp[0].length];
 
-		worldSizeX = 64 * temp[0].length;
-		worldSizeY = 64 * temp.length;
+		worldSizeX = 32 * temp[0].length;
+		worldSizeY = 32 * temp.length;
 
 		
 		for (int i = 0; i < temp.length; i++) {
