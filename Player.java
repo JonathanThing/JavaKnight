@@ -9,157 +9,158 @@ import java.lang.Math;
 
 class Player extends Character {
 
-	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
+ static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
 
-	// sprite
-	private BufferedImage sprite;
+ // sprite
+ private BufferedImage sprite;
 
-	// ammo
-	private double ammo;
+ // ammo
+ private double ammo;
 
-	// get ammo
-	public double getAmmo() {
-		return this.ammo;
-	}
+ // get ammo
+ public double getAmmo() {
+  return this.ammo;
+ }
 
-	// load sprite
-	public void loadSprite() {
-		try {
+ // load sprite
+ public void loadSprite() {
+  try {
 
-		} catch (Exception e) {
-			System.out.println("error loading sprite");
-		}
-		;
-	}
+  } catch (Exception e) {
+   System.out.println("error loading sprite");
+  }
+  ;
+ }
 
-	// draw
-	public void draw(Graphics g, double offSetX, double offSetY) {
+ // draw
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
+  g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+ }
 
-	// create projectiles
-	public void shoot(double targetX, double targetY) {
-		double xDifference = targetX - getX();
-		double yDifference = targetY - getY();
+ // create projectiles
+ public void shoot(double targetX, double targetY) {
+  double xDifference = targetX - getX();
+  double yDifference = targetY - getY();
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+  double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp) * 60);
-		double yChange = ((yDifference / hyp) * 60);
+  double xChange = ((xDifference / hyp) * 10);
+  double yChange = ((yDifference / hyp) * 10);
 
-		playerProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
-	}
+  playerProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
+ }
 
-	// move projectiles
-	public void moveProjectile() {
+ // move projectiles
+ public void moveProjectile() {
 
-		for (int i = 0; i < playerProjectiles.size(); i++) {
+  for (int i = 0; i < playerProjectiles.size(); i++) {
 
-			(playerProjectiles.get(i)).moveDown((playerProjectiles.get(i)).getChangeY());
-			(playerProjectiles.get(i)).moveRight((playerProjectiles.get(i)).getChangeX());
+   (playerProjectiles.get(i)).moveDown((playerProjectiles.get(i)).getChangeY());
+   (playerProjectiles.get(i)).moveRight((playerProjectiles.get(i)).getChangeX());
 
-		}
+  }
 
-	}
+ }
 
-	// draw projectiles
-	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
-		}
-	}
+ // draw projectiles
+ public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
+  for (int i = 0; i < playerProjectiles.size(); i++) {
+   (playerProjectiles.get(i)).draw(g,offSetX,offSetY);
+  }
+ }
 
-	public void removeProjectile(int i) {
-		playerProjectiles.remove(i);
-	}
+ /*
+ public void removeProjectile(Enemy enemy){
+   playerProjectiles.remove(enemy.getHitProjectileIndex());
+ }
+*/
+ public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
 
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
+  double xMove = 0;
+  double yMove = 0;
 
-		double xMove = 0;
-		double yMove = 0;
+  if (up) {
+   yMove += 1;
+  }
 
-		if (up) {
-			yMove += 1;
-		}
+  if (down) {
+   yMove -= 1;
+  }
 
-		if (down) {
-			yMove -= 1;
-		}
+  if (left) {
+   xMove -= 1;
+  }
 
-		if (left) {
-			xMove -= 1;
-		}
+  if (right) {
+   xMove += 1;
+  }
 
-		if (right) {
-			xMove += 1;
-		}
+  double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
 
-		double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
+  if (hyp != 0) {
 
-		if (hyp != 0) {
+   this.moveRight((xMove / hyp) * 10);
 
-			this.moveRight((xMove / hyp) * 10);
+   if (collision(list, map)) {
 
-			if (collision(list, map)) {
+    this.moveLeft((xMove / hyp) * 10);
+   }
 
-				this.moveLeft((xMove / hyp) * 10);
-			}
+   this.moveUp((yMove / hyp) * 10);
 
-			this.moveUp((yMove / hyp) * 10);
+   if (collision(list, map)) {
 
-			if (collision(list, map)) {
+    this.moveDown((yMove / hyp) * 10);
 
-				this.moveDown((yMove / hyp) * 10);
+   }
 
-			}
+  }
 
-		}
+ }
 
-	}
+ public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
 
-	public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
+  for (int i = 0; i < a.size(); i++) {
+   if (this.getCollision().intersects(a.get(i).getCollision())) {
+    return true;
+   }
+  }
 
-		for (int i = 0; i < a.size(); i++) {
-			if (this.getCollision().intersects(a.get(i).getCollision())) {
-				return true;
-			}
-		}
+  for (int i = 0; i < b.length; i++) {
+   for (int j = 0; j < b[0].length; j++) {
+    if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
+     return true;
+    }
+   }
+  }
+  return false;
+ }
 
-		for (int i = 0; i < b.length; i++) {
-			for (int j = 0; j < b[0].length; j++) {
-				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+ public boolean wasHit(Enemy a) {
 
-	public boolean wasHit(Enemy a) {
+  for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
 
-		for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
+   if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
 
-			if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
+    a.enemyProjectiles.remove(i);
 
-				a.enemyProjectiles.remove(i);
+    return true;
+   }
 
-				return true;
-			}
+  }
 
-		}
+  return false;
+ }
 
-		return false;
-	}
-
-	// constructor
-	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
-		// Player(int x, int y, int width, int height, BufferedImage sprite, String
-		// name, double health, String weapon, double ammo){
-		super(x, y, width, height, name, health, weapon);
-		// super(x, y, width,height, sprite, name, health, weapon);
-		this.ammo = ammo;
-		loadSprite();
-	}
+ // constructor
+ Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
+  // Player(int x, int y, int width, int height, BufferedImage sprite, String
+  // name, double health, String weapon, double ammo){
+  super(x, y, width, height, name, health, weapon);
+  // super(x, y, width,height, sprite, name, health, weapon);
+  this.ammo = ammo;
+  loadSprite();
+ }
 
 }

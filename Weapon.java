@@ -49,8 +49,8 @@ class Weapon extends Items{
 
 @Override
 public void draw(Graphics g, double offSetX, double offSetY) {
-	// TODO Auto-generated method stub
-	
+ // TODO Auto-generated method stub
+ 
 }
 
 }
