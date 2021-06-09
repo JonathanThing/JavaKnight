@@ -4,7 +4,7 @@ public class Wall extends Environment {
 
 
 	Wall(double x, double y, String name) {
-		super(x, y, 64, 64, name);
+		super(x, y, 32, 32, name);
 
 	}
 	
