@@ -44,11 +44,13 @@ public class Game extends JFrame {
 	static PointerInfo mouse;
 	static Point p;
 
+	static Weapon[] weapons;
 	static Environment[][] map;
 	static GameAreaPanel gamePanel;
 	static Graphics g;
 	static int gameState = 0; // 0 = Menu, 1 = Game, 2 = dead
 	static boolean up, down, left, right;
+	static boolean shooting;
 	static int offsetMaxX;
 	static int offsetMaxY;
 	static int worldSizeX;
@@ -60,6 +62,7 @@ public class Game extends JFrame {
 	static Font title = new Font("Serif", Font.PLAIN, 50);
 	static Font subTitle = new Font("Serif", Font.PLAIN, 25);
 	static Font health = new Font("Serif", Font.PLAIN, 20);
+	static long lastShot;
 
 	/***************************************************************/
 	/** GameFrame - Setups up the Window and Starts displaying it **/
@@ -108,6 +111,11 @@ public class Game extends JFrame {
 	/********************* Main Method ************************/
 	public static void main(String[] args) throws Exception {
 
+		weapons = new Weapon[6];
+		weapons[0] = new Weapon(0, 0, 10, 10, "pistol", 20, 0.4, 10);
+		weapons[1] = new Weapon(0, 0, 10, 10, "smg", 5, 0.1, 10);
+		weapons[2] = new Weapon(0, 0, 10, 10, "shotgun", 15, 1, 10);
+		
 		mapInit();
 
 		System.out.println("?>?");
@@ -141,9 +149,9 @@ public class Game extends JFrame {
 					map[i][j] = new Wall((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, "wall");
 					break;
 
-				case 'e':
-					enemyList.add(new Enemy((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, 25, 25, "Enemy", 100, "idk",
-							player));
+				case 's':
+					enemyList.add(new Enemy((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, 25, 25, "skeleton", 100,
+							weapons[0], player));
 					break;
 
 				case 'h':
@@ -151,7 +159,7 @@ public class Game extends JFrame {
 					break;
 
 				case 'p':
-					player = new Player((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "player", 100, "sword",
+					player = new Player((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "player", 100, weapons[0],
 							50);
 					break;
 				}
@@ -253,14 +261,16 @@ public class Game extends JFrame {
 	}
 
 	public void gameInit() {
+		
+		lastShot = System.nanoTime();
+
 		player.setHealth(100);
-		mapInit();
 
 		offsetMaxX = worldSizeX - 1280;
 		offsetMaxY = worldSizeY - 720;
 		offsetMinX = 0;
 		offsetMinY = 0;
-		
+
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("images/crosshair.png").getImage(),new Point(16,16),"crosshair"));
 	}
 
@@ -277,6 +287,11 @@ public class Game extends JFrame {
 
 	// Game update
 	public void gameTick() {
+		
+		
+
+		mouse = MouseInfo.getPointerInfo();
+		p = mouse.getLocation();
 
 		if (player.getHealth() <= 0) {
 			changeState(2);
@@ -294,6 +309,11 @@ public class Game extends JFrame {
 			camY = offsetMaxY;
 		} else if (camY < offsetMinY) {
 			camY = offsetMinY;
+		}
+	
+		if (shooting && (System.nanoTime() - lastShot >= 1e9 * player.getWeapon().getFireRate())) {
+			player.shoot(p.getX() - 7 + camX, p.getY() - 30 + camY);
+			lastShot = System.nanoTime();
 		}
 
 		player.movement(up, down, left, right, enemyList, map);
@@ -335,17 +355,15 @@ public class Game extends JFrame {
 				player.setHealth(player.getHealth() - 5);
 			}
 
-			if ((enemyList.get(i)).getHit(player)) {
-//    player.removeProjectile(i); //WARNING DOES NOT WORK WILL NEED TO CREATE ID FOR EACH BULLET TO KNOW WHEN IT GET IT
-				enemyList.get(i).setHealth(enemyList.get(i).getHealth() - 10);
-			}
+			enemyList.get(i).getHit(player);	
 
-			if ((enemyList.get(i)).getHealth() == 0) {
+
+			if ((enemyList.get(i)).getHealth() <= 0) {
 				enemyList.remove(i);
 				break;
 			}
 
-			if (getRandomNumber(1, 50) == 1) {
+			if (getRandomNumber(1, 30) == 1) {
 				(enemyList.get(i)).shoot(player);
 			}
 
@@ -404,9 +422,6 @@ public class Game extends JFrame {
 
 	// Rendering the Game
 	public void gameRender(Graphics g) {
-
-		mouse = MouseInfo.getPointerInfo();
-		p = mouse.getLocation();
 
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
@@ -493,6 +508,15 @@ public class Game extends JFrame {
 			if (e.getKeyChar() == 'l') {
 				player.setHealth(player.getHealth() - player.getHealth());
 			}
+			
+			if (e.getKeyChar() == '1') {
+				player.setWeapon(weapons[0]);
+			} else if (e.getKeyChar() == '2') {
+				player.setWeapon(weapons[1]);
+			} else if (e.getKeyChar() == '3') {
+				player.setWeapon(weapons[2]);
+			}
+
 
 		}
 
@@ -544,14 +568,15 @@ public class Game extends JFrame {
 		public void mousePressed(MouseEvent e) {
 
 			// menu buttons
-			if ((gameState == 0) && (e.getX() >= 590) && (e.getX() <= 690) && (e.getY() >= 340) && (e.getY() <= 410)) {
-				changeState(1);
-			} else if ((gameState == 0) && (e.getX() >= 590) && (e.getX() <= 690) && (e.getY() >= 370)
-					&& (e.getY() <= 460)) {
-				System.exit(0);
-				// shoot
+			if ((gameState == 0) && (e.getX() >= 590) && (e.getX() <= 690)) {
+				if ((e.getY() >= 370) && (e.getY() <= 460)) {
+					changeState(1);
+				} else if ((e.getY() >= 340) && (e.getY() <= 410)) {
+					System.exit(0);
+				}
+				
 			} else if (gameState == 1) {
-				player.shoot(e.getX() - 7 + camX, e.getY() - 30 + camY); // Mouse offset cause it is very clown lol
+				shooting = true;
 
 				// death screen buttons
 			} else if ((gameState == 2) && (e.getX() >= 590) && (e.getX() <= 690) && (e.getY() >= 340)
@@ -565,6 +590,10 @@ public class Game extends JFrame {
 		}
 
 		public void mouseReleased(MouseEvent e) {
+			if (gameState == 1) {
+				shooting = false;
+			}
+
 		}
 
 		public void mouseEntered(MouseEvent e) {

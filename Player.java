@@ -33,31 +33,48 @@ class Player extends Character {
 		;
 	}
 
-	
-	public void laserBeam (Graphics g, int x, int y, double offSetX, double offSetY) {
+	public void laserBeam(Graphics g, int x, int y, double offSetX, double offSetY) {
 
 		g.setColor(Color.RED);
-		g.drawLine((int)(this.getX()-offSetX),(int)(this.getY()-offSetY),(int)(x-offSetX),(int)(y-offSetY));
+		g.drawLine((int) (this.getX() - offSetX), (int) (this.getY() - offSetY), (int) (x - offSetX),
+				(int) (y - offSetY));
 		g.setColor(Color.BLACK);
 	}
-	
+
 	// draw
 	public void draw(Graphics g, double offSetX, double offSetY) {
 
-		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(),
+				getHeight());
 	}
 
 	// create projectiles
 	public void shoot(double targetX, double targetY) {
-		double xDifference = targetX - getX();
-		double yDifference = targetY - getY();
+
+		double xDifference = targetX - this.getX();
+		double yDifference = targetY - this.getY();
 
 		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
 		double xChange = ((xDifference / hyp) * 30);
 		double yChange = ((yDifference / hyp) * 30);
-		
-		playerProjectiles.add(new Projectile(getX(), getY(), 10, 10, "Bullet", 20, xChange, yChange));
+
+		if (this.getWeapon().getName().equals("shotgun")) {
+			
+			
+			
+			for (int i = 0; i < 8; i++) {
+				playerProjectiles.add(new Projectile(getX(), getY(), this.getWeapon().getSize(),
+						this.getWeapon().getSize(), "Bullet", 20, xChange + Math.random() * (-16) + 8, yChange + Math.random() * (-16) + 8));
+			}
+		} else if (this.getWeapon().getName().equals("smg")) {
+			playerProjectiles.add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+					"Bullet", 20, xChange + Math.random() * (-2) + 1, yChange + Math.random() * (-4) + 1));
+
+		} else {
+			playerProjectiles.add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+					"Bullet", 20, xChange, yChange));
+		}
 	}
 
 	// move projectiles
@@ -75,7 +92,7 @@ class Player extends Character {
 	// draw projectiles
 	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
 		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
+			(playerProjectiles.get(i)).draw(g, offSetX, offSetY);
 		}
 	}
 
@@ -83,7 +100,8 @@ class Player extends Character {
 		playerProjectiles.remove(i);
 	}
 
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
+	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list,
+			Environment[][] map) {
 
 		double xMove = 0;
 		double yMove = 0;
@@ -137,7 +155,7 @@ class Player extends Character {
 
 		for (int i = 0; i < b.length; i++) {
 			for (int j = 0; j < b[0].length; j++) {
-				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
+				if ((b[i][j] != null) && (this.getCollision().intersects(b[i][j].getCollision()))) {
 					return true;
 				}
 			}
@@ -162,7 +180,7 @@ class Player extends Character {
 	}
 
 	// constructor
-	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
+	Player(double x, double y, int width, int height, String name, double health, Weapon weapon, double ammo) {
 		// Player(int x, int y, int width, int height, BufferedImage sprite, String
 		// name, double health, String weapon, double ammo){
 		super(x, y, width, height, name, health, weapon);

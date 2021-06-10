@@ -18,18 +18,18 @@ class Enemy extends Character {
 		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
 	}
 
-	public boolean getHit(Player player) {
+	public void getHit(Player player) {
 
 		for (int i = 0; i < (player.playerProjectiles).size(); i++) {
 
 			if (player.playerProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
+				
+				this.setHealth(this.getHealth() - player.getWeapon().getDamage());
 				player.playerProjectiles.remove(i);
-				return true;
 			}
 
 		}
-
-		return false;
+		
 	}
 
 
@@ -65,7 +65,7 @@ class Enemy extends Character {
 		}
 	}
 
-	Enemy(double x, double y, int width, int height, String name, double health, String weapon, Player player) {
+	Enemy(double x, double y, int width, int height, String name, double health, Weapon weapon, Player player) {
 		// Enemy(int x, int y, int width, int height, BufferedImage sprite, String name,
 		// double health, String weapon, Player player){
 		super(x, y, width, height, name, health, weapon);
