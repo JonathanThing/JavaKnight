@@ -2,6 +2,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import java.io.File;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Shape;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.lang.Math;
 
 class Player extends Character {
 
-	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
+	ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
 
 	// sprite
 	private BufferedImage sprite;
@@ -32,6 +33,14 @@ class Player extends Character {
 		;
 	}
 
+	
+	public void laserBeam (Graphics g, int x, int y, double offSetX, double offSetY) {
+
+		g.setColor(Color.RED);
+		g.drawLine((int)(this.getX()-offSetX),(int)(this.getY()-offSetY),(int)(x-offSetX),(int)(y-offSetY));
+		g.setColor(Color.BLACK);
+	}
+	
 	// draw
 	public void draw(Graphics g, double offSetX, double offSetY) {
 
@@ -47,8 +56,8 @@ class Player extends Character {
 
 		double xChange = ((xDifference / hyp) * 30);
 		double yChange = ((yDifference / hyp) * 30);
-
-		playerProjectiles.add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange, yChange));
+		
+		playerProjectiles.add(new Projectile(getX(), getY(), 10, 10, "Bullet", 20, xChange, yChange));
 	}
 
 	// move projectiles

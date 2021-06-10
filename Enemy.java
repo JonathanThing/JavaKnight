@@ -23,7 +23,7 @@ class Enemy extends Character {
 		for (int i = 0; i < (player.playerProjectiles).size(); i++) {
 
 			if (player.playerProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
-
+				player.playerProjectiles.remove(i);
 				return true;
 			}
 
