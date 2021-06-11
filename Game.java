@@ -147,7 +147,7 @@ public class Game extends JFrame {
 		char[][] temp = null;
 
 		try {
-			temp = getMap("maps/map2");
+			temp = getMap("maps/map1");
 		} catch (Exception e) {
 
 			System.out.println("it broke");
