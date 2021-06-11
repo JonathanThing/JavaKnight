@@ -6,73 +6,39 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 import java.awt.Rectangle;
 
-class Enemy extends Character {
+abstract class Enemy extends Character {
 
-	public ArrayList<Projectile> enemyProjectiles;
-
-	private Player player;
-
-	public void draw(Graphics g, double offSetX, double offSetY) {
-
-		g.setColor(Color.RED);
-		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
-
-	public boolean getHit(Player player) {
-
-		for (int i = 0; i < (player.playerProjectiles).size(); i++) {
-
-			if (player.playerProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
-
-				return true;
-			}
-
-		}
-
-		return false;
-	}
+ private Player player;
 
 
-	public void shoot(Player player) {
-		int playerX = (int) (player.getX());
-		int playerY = (int) (player.getY());
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-		double xDifference = getX() - player.getX();
-		double yDifference = getY() - player.getY();
+  g.setColor(Color.RED);
+  g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+ }
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+ public void getHit(Player player) {
 
-		double xChange = ((xDifference / hyp)*10);
-		double yChange = ((yDifference / hyp)*10);
+  for (int i = 0; i < (player.getProjectilesList()).size(); i++) {
 
-		enemyProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
-	}
+   if (player.getProjectilesList().get(i).getHitbox().intersects(this.getHitbox())) {
+    
+    this.setHealth(this.getHealth() - player.getWeapon().getDamage());
+    player.getProjectilesList().remove(i);
+   }
 
-	public void moveProjectile() {
+  }
+  
+ }
 
-		for (int i = 0; i < this.enemyProjectiles.size(); i++) {
 
-			(this.enemyProjectiles.get(i)).moveUp((this.enemyProjectiles.get(i)).getChangeY());
-			(this.enemyProjectiles.get(i)).moveLeft((this.enemyProjectiles.get(i)).getChangeX());
+ public abstract void attack(Player player);
+ 
+ 
 
-		}
-
-	}
-
-	public void drawEnemyProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < enemyProjectiles.size(); i++) {
-			(enemyProjectiles.get(i)).draw(g, offSetX, offSetY);
-		}
-	}
-
-	Enemy(double x, double y, int width, int height, String name, double health, String weapon, Player player) {
-		// Enemy(int x, int y, int width, int height, BufferedImage sprite, String name,
-		// double health, String weapon, Player player){
-		super(x, y, width, height, name, health, weapon);
-		// super(x, y, width, height, sprite, name, health, weapon);
-		
-		enemyProjectiles = new ArrayList<Projectile>();
-		 
-	}
+ Enemy(double x, double y, int width, int height, String name, double health, Weapon weapon) {
+  super(x, y, width, height, name, health, weapon);
+   
+ }
 
 }
