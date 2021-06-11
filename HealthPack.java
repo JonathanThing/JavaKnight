@@ -6,12 +6,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class HealthPack extends Pickups {
+class HealthPack extends Items {
 
 	private Rectangle healthPack;
 
-	HealthPack(int x, int y, int width, int height, String name) {
-		super(x, y, width, height, name);
+	HealthPack(int x, int y, int width, int height, String name, BufferedImage sprite) {
+		super(x, y, width, height, name, sprite);
 	}
 
 	public void draw(Graphics g, double offSetX, double offSetY) {

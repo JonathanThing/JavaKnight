@@ -69,13 +69,13 @@ abstract class GameObject{
   
 
   //constructor
-  GameObject(double x, double y, int width, int height, String name){
+  GameObject(double x, double y, int width, int height, String name, BufferedImage sprite){
   //GameObject(int x, int y, int width, int height, BufferedImage sprite, String name){
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    //this.sprite = sprite;
+    this.sprite = sprite;
     this.name = name;
   }
   
