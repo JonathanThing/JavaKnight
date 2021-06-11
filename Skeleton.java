@@ -23,7 +23,15 @@ class Skeleton extends Enemy {
 		double xChange = ((xDifference / hyp)*6);
 		double yChange = ((yDifference / hyp)*6);
 
-		this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange, yChange));
+		
+		if (this.getName().equals("eliteSkeleton")) {
+			for (int i = 0 ; i < 4; i++) {
+				this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange+Math.random()*-2 + 1, yChange+Math.random()*-2 + 1));
+			}
+		} else {
+			this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", 20, xChange, yChange));
+
+		}
 	}
 
 	public void moveProjectile() {

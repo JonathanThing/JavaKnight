@@ -179,7 +179,7 @@ class Player extends Character {
 	}
 	
 	public Rectangle getAggro() {
-		return new Rectangle((int)this.getX() - (32*40)/2, (int) this.getY() -  (32*40)/2, 32*40, 32*40);
+		return new Rectangle((int)this.getX() - (32*40)/2, (int) this.getY() - (32*35)/2, 32*40, 32*35);
 	}
 
 	// constructor

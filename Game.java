@@ -155,21 +155,26 @@ public class Game extends JFrame {
 					break;
 
 				case 's':
-					enemyList.add(new Skeleton((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, 25, 25, "skeleton", 100,
+					enemyList.add(new Skeleton((int) j * 32 + 25 / 2, (int) i * 32 + 25 / 2, 25, 25, "skeleton", 100,
+							weapons[3]));
+					break;
+
+				case 'S':
+					enemyList.add(new Skeleton((int) j * 32 + 25 / 2, (int) i * 32 + 25 / 2, 25, 25, "eliteSkeleton", 200,
 							weapons[3]));
 					break;
 
 				case 'h':
-					healthPacks.add(new HealthPack((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "HP"));
+					healthPacks.add(new HealthPack((int) j * 32 + 25 / 2, (int) i * 32 + 25 / 2, 25, 25, "HP"));
 					break;
 
 				case 'p':
-					player = new Player((int) j * 32 + 32 / 2, (int) i * 32 + 23 / 2, 25, 25, "player", 100, weapons[0],
+					player = new Player((int) j * 32 + 25 / 2, (int) i * 32 + 25 / 2, 25, 25, "player", 100, weapons[0],
 							50);
 					break;
 
 				case 'z':
-					enemyList.add(new Zombie((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, 25, 25, "zombie", 100,
+					enemyList.add(new Zombie((int) j * 32 + 25 / 2, (int) i * 32 + 25 / 2, 25, 25, "zombie", 100,
 							weapons[1]));
 					break;
 				}
@@ -343,7 +348,7 @@ public class Game extends JFrame {
 		// Enemy
 		for (int i = 0; i < enemyList.size(); i++) {
 
-			if (enemyList.get(i).getName().equals("skeleton")) {
+			if (!enemyList.get(i).getName().equals("zombie")) {
 				((Skeleton) enemyList.get(i)).moveProjectile();
 			}
 
@@ -372,7 +377,7 @@ public class Game extends JFrame {
 			}
 
 			if (player.getAggro().intersects(enemyList.get(i).getCollision())) {
-				if (enemyList.get(i).getName().equals("skeleton")) {
+				if (!enemyList.get(i).getName().equals("zombie")) {
 					(enemyList.get(i)).attack(player);
 				} else {
 					((Zombie) enemyList.get(i)).move(player,map,enemyList);
@@ -462,7 +467,7 @@ public class Game extends JFrame {
 		for (int i = 0; i < enemyList.size(); i++) {
 
 			(enemyList.get(i)).draw(g, camX, camY);
-			if (enemyList.get(i).getName().equals("skeleton")) {
+			if (!enemyList.get(i).getName().equals("zombie")) {
 				((Skeleton) enemyList.get(i)).drawEnemyProjectile(g, camX, camY);
 			}
 		}
