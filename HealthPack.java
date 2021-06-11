@@ -16,8 +16,7 @@ class HealthPack extends Items {
 
 	public void draw(Graphics g, double offSetX, double offSetY) {
 
-		g.setColor(Color.GREEN);
-		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+		g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null);
 	}
 
 	public boolean checkCollision(Player p) {

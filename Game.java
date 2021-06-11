@@ -121,7 +121,8 @@ public class Game extends JFrame {
 		sprites.add(ImageIO.read(new File("images/skeleton.png"))); // 4
 		sprites.add(ImageIO.read(new File("images/zombie.png"))); // 5
 		sprites.add(ImageIO.read(new File("images/witherskeleton.png"))); // 6
-
+		sprites.add(ImageIO.read(new File("images/healthpack.png"))); //7
+		
 		weapons = new Weapon[6];
 		weapons[0] = new Weapon(0, 0, 10, 10, "pistol", sprites.get(0), 30, 0.4, 10);
 		weapons[1] = new Weapon(0, 0, 10, 10, "smg", sprites.get(0), 10, 0.1, 10);
@@ -180,7 +181,7 @@ public class Game extends JFrame {
 
 				case 'h':
 					healthPacks.add(
-							new HealthPack((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "HP", sprites.get(0)));
+							new HealthPack((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "HP", sprites.get(7)));
 					break;
 
 				case 'p':
@@ -471,8 +472,8 @@ public class Game extends JFrame {
 			}
 		}
 
-		player.draw(g, camX, camY);
 		player.laserBeam(g, (int) (mouseX + camX - 7), (int) (mouseY + camY - 30), camX, camY);
+		player.draw(g, camX, camY);
 
 		player.drawPlayerProjectile(g, camX, camY);
 		for (int j = 0; j < healthPacks.size(); j++) {
