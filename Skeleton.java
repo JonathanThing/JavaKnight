@@ -20,8 +20,8 @@ class Skeleton extends Enemy {
 
 		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp)*6);
-		double yChange = ((yDifference / hyp)*6);
+		double xChange = ((xDifference / hyp)*7);
+		double yChange = ((yDifference / hyp)*7);
 
 		
 		if (this.getName().equals("eliteSkeleton")) {

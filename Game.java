@@ -126,8 +126,9 @@ public class Game extends JFrame {
 		weapons[0] = new Weapon(0, 0, 10, 10, "pistol", sprites.get(0), 30, 0.4, 10);
 		weapons[1] = new Weapon(0, 0, 10, 10, "smg", sprites.get(0), 10, 0.1, 10);
 		weapons[2] = new Weapon(0, 0, 10, 10, "shotgun", sprites.get(0), 15, 1, 10);
-		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 1, 10);
-
+		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
+		weapons[4] = new Weapon(0, 0, 10, 10, "buckshot", sprites.get(0), 10, 1, 10);
+		
 		mapInit();
 
 		System.out.println("?>?");
@@ -145,7 +146,7 @@ public class Game extends JFrame {
 		char[][] temp = null;
 
 		try {
-			temp = getMap("maps/map1");
+			temp = getMap("maps/map2");
 		} catch (Exception e) {
 
 			System.out.println("it broke");
@@ -174,7 +175,7 @@ public class Game extends JFrame {
 
 				case 'S':
 					enemyList.add(new Skeleton((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "eliteSkeleton",
-							sprites.get(6), 200, weapons[3]));
+							sprites.get(6), 200, weapons[4]));
 					break;
 
 				case 'h':
