@@ -7,28 +7,28 @@ import java.awt.Rectangle;
 
 abstract class Character extends Entity {
 
-	private ArrayList<Projectile> projectilesList = new ArrayList<Projectile>();
+ private ArrayList<Projectile> projectilesList = new ArrayList<Projectile>();
 
-	// Weapon
-	private Weapon weapon;
+ // Weapon
+ private Weapon weapon;
 
-	Character(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
-		// Character(int x, int y, int width, int height, BufferedImage sprite, String
-		// name, double health, String weapon){
-		super(x, y, width, height, name, sprite, health);
-		this.weapon = weapon;
+ Character(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
+  // Character(int x, int y, int width, int height, BufferedImage sprite, String
+  // name, double health, String weapon){
+  super(x, y, width, height, name, sprite, health);
+  this.weapon = weapon;
 
-	}
+ }
 
-	public Weapon getWeapon() {
-		return this.weapon;
-	}
+ public Weapon getWeapon() {
+  return this.weapon;
+ }
 
-	public void setWeapon(Weapon weapon) {
-		this.weapon = weapon;
-	}
+ public void setWeapon(Weapon weapon) {
+  this.weapon = weapon;
+ }
 
-	public ArrayList<Projectile> getProjectilesList() {
-		return projectilesList;
-	}
+ public ArrayList<Projectile> getProjectilesList() {
+  return projectilesList;
+ }
 }

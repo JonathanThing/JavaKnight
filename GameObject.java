@@ -1,3 +1,4 @@
+  
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -58,11 +59,11 @@ abstract class GameObject{
   }
   
   public Rectangle getCollision() {
-	  return new Rectangle((int)this.x - this.width/2, (int) this.y - this.height/2, this.width, this.height);
+   return new Rectangle((int)this.x - this.width/2, (int) this.y - this.height/2, this.width, this.height);
   }
   
   public Rectangle getHitbox() {
-	  return new Rectangle((int)this.x - this.width/2, (int) this.y - this.height/2, this.width, this.height);
+   return new Rectangle((int)this.x - this.width/2, (int) this.y - this.height/2, this.width, this.height);
   }
 
   public abstract void draw (Graphics g,  double offSetX, double offSetY);
