@@ -6,39 +6,39 @@ import java.awt.Rectangle;
 
 class Weapon extends Items {
 
-	private int size;
-	// damage this weapon deals
-	private double damage;
+ private int size;
+ // damage this weapon deals
+ private double damage;
 
-	// rate at which this weapon can be used
-	private double fireRate;
+ // rate at which this weapon can be used
+ private double fireRate;
 
-	public double getDamage() {
-		return this.damage;
-	}
+ public double getDamage() {
+  return this.damage;
+ }
 
-	public double getFireRate() {
-		return this.fireRate;
-	}
+ public double getFireRate() {
+  return this.fireRate;
+ }
 
-	public int getSize() {
-		return this.size;
-	}
+ public int getSize() {
+  return this.size;
+ }
 
-	public void drawWeapon(Graphics g) {
-		g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
-	}
+ public void drawWeapon(Graphics g) {
+  g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
+ }
 
-	// constructor
-	Weapon(int x, int y, int width, int height, String name, BufferedImage sprite, double damage, double fireRate, int size) {
-		super(x, y, width, height, name, sprite);
-		this.damage = damage;
-		this.fireRate = fireRate;
-		this.size = size;
-	}
+ // constructor
+ Weapon(int x, int y, int width, int height, String name, BufferedImage sprite, double damage, double fireRate, int size) {
+  super(x, y, width, height, name, sprite);
+  this.damage = damage;
+  this.fireRate = fireRate;
+  this.size = size;
+ }
 
-	public void draw(Graphics g, double offSetX, double offSetY) {
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-	}
+ }
 
 }
