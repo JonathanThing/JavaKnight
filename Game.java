@@ -4,6 +4,7 @@ import java.awt.FontMetrics;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import java.awt.Image;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
@@ -64,6 +65,8 @@ public class Game extends JFrame {
  static Font health = new Font("Serif", Font.PLAIN, 20);
  static long lastShot;
  static int mouseX, mouseY;
+ 
+ static Image img = Toolkit.getDefaultToolkit().getImage("images/background.jpg");
 
  /***************************************************************/
  /** GameFrame - Setups up the Window and Starts displaying it **/
@@ -109,6 +112,7 @@ public class Game extends JFrame {
   t.start();
 
  }
+ 
 
  /************************ End of GameFrame ***********************/
 
@@ -130,8 +134,16 @@ public class Game extends JFrame {
   weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
   weapons[4] = new Weapon(0, 0, 10, 10, "buckshot", sprites.get(0), 10, 1, 10);
   
-  mapInit();
-
+  mapInit("maps/map1");
+  
+  /*
+  if (gameState == 1){
+    mapInit("maps/map1");
+  } else if (gameState == 4){
+    mapInit("maps/map2");
+  }
+*/
+  
   System.out.println("?>?");
 
   EventQueue.invokeLater(() ->
@@ -142,6 +154,7 @@ public class Game extends JFrame {
   });
  }
 
+ /*
  public static void mapInit() {
   enemyList.clear();
   char[][] temp = null;
@@ -152,7 +165,19 @@ public class Game extends JFrame {
 
    System.out.println("it broke");
   }
-
+  */
+ 
+  public static void mapInit(String file) {
+    enemyList.clear();
+    char[][] temp = null;
+    
+    try {
+      temp = getMap(file);
+    } catch (Exception e) {
+      
+      System.out.println("it broke");
+    }
+  
   map = new Environment[temp.length][temp[0].length];
 
   worldSizeX = 32 * temp[0].length + 16;
@@ -189,10 +214,12 @@ public class Game extends JFrame {
      break;
 
     case 'p':
+     System.out.println("Generating player");
      player = new Player((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "player", sprites.get(3),
        100, weapons[0]);
      playerX = (int) j * 32 + 32 / 2;
      playerY = (int) i * 32 + 23 / 2;
+     System.out.println("Generated player");
      break;
 
     case 'z':
@@ -251,8 +278,9 @@ public class Game extends JFrame {
 
     menuTick();
 
-   } else if (gameState == 1) { // Game State
+   } else if ((gameState == 1) || (gameState == 4)) { // Game State
 
+     
     gameTick();
 
    }
@@ -279,7 +307,7 @@ public class Game extends JFrame {
    if (gameState == 0) {
     menuRender(g);
 
-   } else if (gameState == 1) { // Game State
+   } else if ((gameState == 1) || (gameState == 4)){ // Game State
     gameRender(g);
 
    } else if (gameState == 2) {
@@ -313,11 +341,18 @@ public class Game extends JFrame {
  }
 
  public void gameInit() {
-    
-  mapInit();
-  lastShot = System.nanoTime();
-
+        
+   if (gameState == 1){
+     mapInit("maps/map1");
+     System.out.println("map 1");
+   } else if (gameState == 4){
+     mapInit("maps/map2");
+     System.out.println("map 2");
+   }
+   
+  System.out.println("setting player health");
   player.setHealth(100);
+  lastShot = System.nanoTime();
 
   offsetMaxX = worldSizeX - 1280;
   offsetMaxY = worldSizeY - 720;
@@ -341,11 +376,11 @@ public class Game extends JFrame {
 
  // Game update
  public void gameTick() {
-
+   
   if (player.getHealth() <= 0) {
    changeState(2);
   }
-
+  
   camX = player.getX() - 1280 / 2;
   camY = player.getY() - 720 / 2;
 
@@ -459,6 +494,8 @@ public class Game extends JFrame {
 
  // Rendering the Menu
  public void menuRender(Graphics g) {
+       
+  g.drawImage(img, 0, 0, null);
 
   g.setFont(title);
   drawCenteredString("Java Knight", 1280, 720, g);
@@ -466,9 +503,12 @@ public class Game extends JFrame {
   g.setFont(subTitle);
   drawCenteredString("Play", 1280, 820, g);
   g.drawRect(640 - 50, 320 + 20, 100, 40);
-
-  drawCenteredString("Quit", 1280, 920, g);
+  
+  drawCenteredString("Play 2", 1280, 920, g);
   g.drawRect(640 - 50, 370 + 20, 100, 40);
+
+  drawCenteredString("Quit", 1280, 1020, g);
+  g.drawRect(640 - 50, 420 + 20, 100, 40);
 
  }
 
@@ -550,8 +590,10 @@ public void changeState(int a) {
 
   if (gameState == 0) {
    menuInit();
-  } else if (gameState == 1) {
+   
+  } else if ((gameState == 1) || (gameState == 4) ) {
    gameInit();
+
   } else if (gameState == 2) {
    deathInit();
   } else if (gameState == 3){
@@ -669,13 +711,19 @@ public void changeState(int a) {
     
     // menu buttons
     if ((gameState == 0) && (e.getX() >= 590) && (e.getX() <= 690)) {
-      if ((e.getY() >= 370) && (e.getY() <= 460)) {
+      if ((e.getY() >= 370) && (e.getY() <= 410)) {
         changeState(1);
-      } else if ((e.getY() >= 340) && (e.getY() <= 410)) {
+        
+      } else if ((e.getY() >= 410) && (e.getY() <= 450)) {
+        changeState(4);
+        
+        
+      } else if ((e.getY() >= 450) && (e.getY() <= 490)) {
         System.exit(0);
       }
       
-    } else if (gameState == 1) {
+      
+    } else if ((gameState == 1)|| (gameState == 4)){
       shooting = true;
       
       // death screen buttons
@@ -698,7 +746,7 @@ public void changeState(int a) {
   }
 
   public void mouseReleased(MouseEvent e) {
-   if (gameState == 1) {
+   if ((gameState == 1) || (gameState == 4)) {
     shooting = false;
    }
 
