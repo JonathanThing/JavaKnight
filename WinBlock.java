@@ -1,11 +1,11 @@
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 public class WinBlock extends Environment {
   
   WinBlock(double x, double y, String name, BufferedImage sprite) {
-    super(x, y, 32, 32, name, sprite);
+  super(x, y, 32, 32, name, sprite);
     
   }
   
@@ -23,7 +23,9 @@ public class WinBlock extends Environment {
   }
   
   public boolean playerWin(Player p){
+    //System.out.println("detecting hit");
     if (p.getCollision().intersects(this.getHitbox())) {
+      System.out.println("hit win");
       return true;
     }
     

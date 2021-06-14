@@ -1,4 +1,10 @@
-  
+/**
+ * [Enemy.java]
+ * Description: The class for enemies
+ * @author Jonathan, Ray, Wajeeh
+ * @version 1.0, May 28, 2021
+ */
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
