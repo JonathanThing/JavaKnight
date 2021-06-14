@@ -16,7 +16,6 @@ class HealthPack extends Items {
 
  public void draw(Graphics g, double offSetX, double offSetY) {
 
-  g.setColor(Color.GREEN);
   g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null);
  }
 
