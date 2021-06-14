@@ -126,13 +126,16 @@ public class Game extends JFrame {
 		sprites.add(ImageIO.read(new File("images/zombie.png"))); // 5
 		sprites.add(ImageIO.read(new File("images/witherskeleton.png"))); // 6
 		sprites.add(ImageIO.read(new File("images/healthpack.png"))); // 7
-
+		sprites.add(ImageIO.read(new File("images/pistol.png"))); // 8
+		sprites.add(ImageIO.read(new File("images/smg.png"))); // 9
+		sprites.add(ImageIO.read(new File("images/shotgun.png"))); // 10
+		
 		weapons = new Weapon[6];
 
 		// Player Weapons
-		weapons[0] = new Weapon(0, 0, 10, 10, "pistol", sprites.get(0), 30, 0.4, 10);
-		weapons[1] = new Weapon(0, 0, 10, 10, "smg", sprites.get(0), 10, 0.1, 10);
-		weapons[2] = new Weapon(0, 0, 10, 10, "shotgun", sprites.get(0), 15, 1, 10);
+		weapons[0] = new Weapon(0, 0, 32, 32, "pistol", sprites.get(8), 30, 0.4, 10);
+		weapons[1] = new Weapon(0, 0, 32, 32, "smg", sprites.get(9), 10, 0.1, 10);
+		weapons[2] = new Weapon(0, 0, 58, 20, "shotgun", sprites.get(10), 15, 1, 10);
 
 		// Enemy Weapons
 		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
@@ -539,15 +542,17 @@ public class Game extends JFrame {
 			}
 		}
 
-		g.setFont(health);
-
+		g.setColor(Color.BLACK);
+		g.fillRect( (int) (player.getX()-camX- 13), (int) (player.getY()-camY - 35),32,17);
+		
+		g.setFont(health);		
 		g.setColor(Color.RED);
-		g.drawString("Health: " + player.getHealth(), 10, 30);
-
-		for (int i = 0; i < enemyList.size(); i++) {
-			g.drawString("Eny Health: " + enemyList.get(i).getHealth(), 10, 90 + i * 25);
-		}
-
+		g.drawString("" + (int) player.getHealth(), (int) (player.getX()-camX- 13), (int) (player.getY()-camY - 20));
+		
+		g.drawImage(player.getWeapon().getSprite(), (int) (mouseX - player.getWeapon().getWidth() / 2 - 7),
+					(int) (mouseY - player.getWeapon().getHeight() / 2 - 30 -30), null);
+		
+		
 	}
 
 	// Method to change the states of the game and intialize the things needed.
