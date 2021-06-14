@@ -4,6 +4,10 @@ import java.io.File;
 import java.awt.FontMetrics;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -121,15 +125,15 @@ public class Game extends JFrame {
 		sprites.add(ImageIO.read(new File("images/skeleton.png"))); // 4
 		sprites.add(ImageIO.read(new File("images/zombie.png"))); // 5
 		sprites.add(ImageIO.read(new File("images/witherskeleton.png"))); // 6
-		sprites.add(ImageIO.read(new File("images/healthpack.png"))); //7
-		
+		sprites.add(ImageIO.read(new File("images/healthpack.png"))); // 7
+
 		weapons = new Weapon[6];
 		weapons[0] = new Weapon(0, 0, 10, 10, "pistol", sprites.get(0), 30, 0.4, 10);
 		weapons[1] = new Weapon(0, 0, 10, 10, "smg", sprites.get(0), 10, 0.1, 10);
 		weapons[2] = new Weapon(0, 0, 10, 10, "shotgun", sprites.get(0), 15, 1, 10);
 		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
 		weapons[4] = new Weapon(0, 0, 10, 10, "buckshot", sprites.get(0), 10, 1, 10);
-		
+
 		mapInit();
 
 		System.out.println("?>?");
@@ -143,11 +147,14 @@ public class Game extends JFrame {
 	}
 
 	public static void mapInit() {
+		
+		player.setHealth(100);
+		mapInit();
 		enemyList.clear();
 		char[][] temp = null;
 
 		try {
-			temp = getMap("maps/map1");
+			temp = getMap("maps/map2");
 		} catch (Exception e) {
 
 			System.out.println("it broke");
