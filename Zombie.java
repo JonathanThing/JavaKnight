@@ -71,7 +71,7 @@ class Zombie extends Enemy {
  }
 
  @Override
- public void attack(Player player, BufferedImage sprite) {
+ public void attack(Player player) {
   // TODO Auto-generated method stub
   
  }

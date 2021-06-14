@@ -5,18 +5,12 @@ import java.awt.FontMetrics;
 
 import javax.imageio.ImageIO;
 import java.awt.Image;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
 import java.awt.Graphics;
-import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.PointerInfo;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -49,13 +43,13 @@ public class Game extends JFrame {
 	static ArrayList<BufferedImage> sprites = new ArrayList<BufferedImage>();
 	static Weapon[] weapons;
 	static Environment[][] map;
-	
+
 	static GameAreaPanel gamePanel;
 	static Graphics g;
 	static int gameState = 0; // 0 = Menu, 1 = Game, 2 = dead, 3 = win, 4 = map editor
 	static String mapName;
-	
-	
+
+	static Scanner input;
 	static Player player;
 	static int playerX, playerY;
 	static boolean up, down, left, right;
@@ -67,6 +61,10 @@ public class Game extends JFrame {
 	static int offsetXMin, offsetYMin;
 	static int worldSizeX, worldSizeY;
 	static double offsetX, offsetY;
+
+	static int editorSizeX, editorSizeY;
+	static char[][] editingMap;
+	static char paintBrush;
 
 	static Font title = new Font("Serif", Font.PLAIN, 50);
 	static Font subTitle = new Font("Serif", Font.PLAIN, 25);
@@ -124,6 +122,8 @@ public class Game extends JFrame {
 	/********************* Main Method ************************/
 	public static void main(String[] args) throws Exception {
 
+		input = new Scanner(System.in);
+
 		sprites.add(ImageIO.read(new File("images/stonebrick.png"))); // 0
 		sprites.add(ImageIO.read(new File("images/mossystone.png"))); // 1
 		sprites.add(ImageIO.read(new File("images/oakwood.png"))); // 2
@@ -146,16 +146,9 @@ public class Game extends JFrame {
 		// Enemy Weapons
 		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
 		weapons[4] = new Weapon(0, 0, 10, 10, "buckshot", sprites.get(0), 10, 1, 10);
-		
+
 		mapName = "map1";
 		mapInit("maps/" + mapName + ".txt");
-
-		/*
-		 * if (gameState == 0){ //mapInit("maps/map1"); } else if (gameState == 1){
-		 * mapInit("maps/map1"); } else if (gameState == 4){ mapInit("maps/map2.txt"); }
-		 */
-
-		System.out.println("?>?");
 
 		EventQueue.invokeLater(() ->
 
@@ -277,8 +270,8 @@ public class Game extends JFrame {
 
 				gameTick();
 
-			} else if (gameState == 5) { //Map editor
-				
+			} else if (gameState == 4) { // Map editor
+				mapEditorTick();
 			}
 
 			this.repaint(); // update the screen
@@ -311,6 +304,8 @@ public class Game extends JFrame {
 
 			} else if (gameState == 3) {
 				winRender(g);
+			} else if (gameState == 4) {
+				mapEditorRender(g);
 			}
 		}
 	}
@@ -320,14 +315,14 @@ public class Game extends JFrame {
 	}
 
 	/****** End of paintComponent *********************************/
-	
+
 	public void menuInit() {
-	
+
 		player.setX(playerX);
 		player.setY(playerY);
-	
+
 		player.setHealth(100);
-	
+
 		setCursor(Cursor.getDefaultCursor());
 	}
 
@@ -337,7 +332,7 @@ public class Game extends JFrame {
 
 	public void gameInit() {
 
-		mapInit("maps/" + mapName +".txt");
+		mapInit("maps/" + mapName + ".txt");
 
 		player.setHealth(100);
 		lastShot = System.nanoTime();
@@ -349,6 +344,27 @@ public class Game extends JFrame {
 
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("images/crosshair.png").getImage(),
 				new Point(16, 16), "crosshair"));
+	}
+
+	public void mapEditorInit() {
+		System.out.print("\nMap editor:\nPlease enter the width of the map in tiles: ");
+		editorSizeX = input.nextInt();
+		System.out.print("\nPlease enter the height of the map in tiles: ");
+		editorSizeY = input.nextInt();
+
+		editingMap = new char[editorSizeY][editorSizeX];
+
+		paintBrush = 0;
+
+		offsetX = 0;
+		offsetY = 0;
+
+		for (int i = 0; i < editorSizeY; i++) {
+			for (int j = 0; j < editorSizeX; j++) {
+				editingMap[i][j] = ' ';
+
+			}
+		}
 	}
 
 	// Updating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -375,7 +391,7 @@ public class Game extends JFrame {
 		}
 
 		if (shooting && (System.nanoTime() - lastShot >= 1e9 * player.getWeapon().getFireRate())) {
-			player.shoot(mouseX  + offsetX, mouseY + offsetY, sprites.get(0));
+			player.shoot(mouseX + offsetX, mouseY + offsetY, sprites.get(0));
 			lastShot = System.nanoTime();
 		}
 
@@ -436,7 +452,7 @@ public class Game extends JFrame {
 
 			if (player.getAggro().intersects(enemyList.get(i).getCollision())) {
 				if (!enemyList.get(i).getName().equals("zombie")) {
-					(enemyList.get(i)).attack(player, sprites.get(0));
+					(enemyList.get(i)).attack(player);
 				} else {
 					((Zombie) enemyList.get(i)).move(player, map, enemyList);
 				}
@@ -469,6 +485,77 @@ public class Game extends JFrame {
 
 	}
 
+	public void mapEditorTick() {
+
+		double xMove = 0;
+		double yMove = 0;
+
+		if (up) {
+			yMove += 1;
+		}
+
+		if (down) {
+			yMove -= 1;
+		}
+
+		if (left) {
+			xMove -= 1;
+		}
+
+		if (right) {
+			xMove += 1;
+		}
+
+		double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
+
+		if (hyp != 0) {
+
+			offsetX += ((xMove / hyp) * 5);
+
+			offsetY -= ((yMove / hyp) * 5);
+		}
+
+		int tileX = (int) ((mouseX + offsetX) / 32);
+		int tileY = (int) ((mouseY + offsetY) / 32);
+
+		if ((shooting) && (tileX < editorSizeX && tileX >= 0) && (tileY < editorSizeY && tileY >= 0)) {
+			switch (paintBrush) {
+			case 2: // Nothing
+				editingMap[tileY][tileX] = ' ';
+				break;
+			case 0: // Wall
+				editingMap[tileY][tileX] = 'w';
+				break;
+			case 8: // Win Block
+				editingMap[tileY][tileX] = 'b';
+				break;
+			case 3: // Player
+				editingMap[tileY][tileX] = 'p';
+				break;
+			case 4: // Skeleton
+				editingMap[tileY][tileX] = 's';
+				break;
+			case 5: // Zombie
+				editingMap[tileY][tileX] = 'z';
+				break;
+			case 6: // Elite Skeleton
+				editingMap[tileY][tileX] = 'S';
+				break;
+			case 7: // Health Pack
+				editingMap[tileY][tileX] = 'h';
+				break;
+
+			}
+
+		}
+
+		try {
+			Thread.sleep(16); // 16 = 60fps, 33 = 30fps
+		} catch (Exception exc) {
+
+		} // delay
+	}
+
 	// Rendering ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	// Rendering the Menu
@@ -481,7 +568,7 @@ public class Game extends JFrame {
 		g.drawRect(640 - 50, 370 + 20, 100, 40);
 		g.drawRect(640 - 50, 420 + 20, 100, 40);
 		g.drawRect(640 - 50, 420 + 20, 100, 40);
-		
+
 		g.setColor(Color.GREEN);
 		g.setFont(title);
 		drawCenteredString("Java Knight", 1280, 720, g);
@@ -539,7 +626,6 @@ public class Game extends JFrame {
 
 		player.laserBeam(g, (int) (mouseX + offsetX), (int) (mouseY + offsetY), offsetX, offsetY);
 		player.draw(g, offsetX, offsetY);
-		
 
 		player.drawPlayerProjectile(g, offsetX, offsetY);
 		for (int j = 0; j < healthPacks.size(); j++) {
@@ -562,8 +648,59 @@ public class Game extends JFrame {
 		g.drawString("" + (int) player.getHealth(), (int) (player.getX() - offsetX - 13),
 				(int) (player.getY() - offsetY - 20));
 
-		g.drawImage(player.getWeapon().getSprite(), (int) (mouseX - player.getWeapon().getWidth() / 2 ),
-				(int) (mouseY - player.getWeapon().getHeight() / 2 - 30 ), null);
+		g.drawImage(player.getWeapon().getSprite(), (int) (mouseX - player.getWeapon().getWidth() / 2),
+				(int) (mouseY - player.getWeapon().getHeight() / 2 - 30), null);
+
+	}
+
+	public void mapEditorRender(Graphics g) {
+		g.setColor(Color.BLACK);
+		int tempInt = 0;
+		for (int i = 0; i < editingMap.length; i++) {
+			for (int j = 0; j < editingMap[0].length; j++) {
+				if (editingMap[i][j] == 'b') {
+					g.setColor(Color.YELLOW);
+					g.fillRect((int) (32 * j - offsetX), (int) (32 * i - offsetY), 32, 32);
+				} else {
+					switch (editingMap[i][j]) {
+					case 'w':
+						tempInt = 0;
+						break;
+					case ' ':
+						tempInt = 2;
+						break;
+					case 's':
+						tempInt = 4;
+						break;
+					case 'z':
+						tempInt = 5;
+						break;
+					case 'S':
+						tempInt = 6;
+						break;
+					case 'h':
+						tempInt = 7;
+						g.drawImage(sprites.get(2), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null); //Drawing the floor under healthpack
+						break;
+					case 'p':
+						tempInt = 3;
+						break;
+					}
+
+					g.drawImage(sprites.get(tempInt), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null);
+				}
+			}
+		}
+		
+		g.setColor(Color.gray);
+		g.fillRect(0,0,500,70);
+		
+		if (paintBrush == 8) {
+			g.setColor(Color.YELLOW);
+			g.fillRect(10, 10, 32, 32);
+		} else {
+			g.drawImage(sprites.get(paintBrush), 10, 10, null);
+		}
 
 	}
 
@@ -575,12 +712,14 @@ public class Game extends JFrame {
 		if (gameState == 0) {
 			menuInit();
 
-		} else if ((gameState == 1) || (gameState == 4) || (gameState == 5)) {
+		} else if (gameState == 1) {
 			gameInit();
 		} else if (gameState == 2) {
 			deathInit();
 		} else if (gameState == 3) {
 			winInit();
+		} else if (gameState == 4) {
+			mapEditorInit();
 		}
 
 	}
@@ -600,20 +739,12 @@ public class Game extends JFrame {
 
 		public void keyTyped(KeyEvent e) {
 
-			if (e.getKeyChar() == 'm') {
-				changeState(0);
-			}
-
-			if (e.getKeyChar() == 'n') {
-				changeState(1);
-			}
-
-			if (e.getKeyChar() == 'b') {
-				changeState(2);
-			}
-
 			if (e.getKeyChar() == 'l') {
-				player.setHealth(player.getHealth() - player.getHealth());
+				player.setHealth(0);
+			}
+
+			if (e.getKeyChar() == 'm') {
+				changeState(4);
 			}
 
 			if (e.getKeyChar() == '1') {
@@ -639,6 +770,37 @@ public class Game extends JFrame {
 			}
 			if (e.getKeyCode() == 'D') {
 				right = true;
+			}
+
+			if (gameState == 4) {
+				switch (e.getKeyCode()) {
+				case '1': // Nothing
+					paintBrush = 2;
+					break;
+				case '2': // Wall
+					paintBrush = 0;
+					break;
+				case '3': // Win Block
+					paintBrush = 8;
+					break;
+				case '4': // Player
+					paintBrush = 3;
+					break;
+				case '5': // Skeleton
+					paintBrush = 4;
+					break;
+				case '6': // Zombie
+					paintBrush = 5;
+					break;
+				case '7': // Elite Skeleton
+					paintBrush = 6;
+					break;
+				case '8': // Health Pack
+					paintBrush = 7;
+					break;
+
+				}
+
 			}
 		}
 
@@ -688,53 +850,51 @@ public class Game extends JFrame {
 
 		public void mousePressed(MouseEvent e) {
 
-			int tempX = e.getX()-7;
-			int tempY = e.getY()-30;
-			
+			// temporary variables just in case the mouse has to be offset
+			int tempX = e.getX();
+			int tempY = e.getY();
+
 			// menu buttons
 			if ((gameState == 0) && (tempX >= 590) && (tempX <= 690)) {
 				if ((tempY >= 370) && (tempY <= 410)) {
 					mapName = "map1";
 					changeState(1);
-					
-					
+
 				} else if ((tempY >= 410) && (tempY <= 450)) {
 					mapName = "map2";
 					changeState(1);
-					
 
-				} else if ((tempY >= 450) && (tempY <= 490)) {
+				} else if ((tempY >= 460) && (tempY <= 500)) {
 					mapName = "map3";
 					changeState(1);
 
-				} else if ((tempY >= 490) && (tempY <= 540)) {
+				} else if ((tempY >= 510) && (tempY <= 550)) {
 					System.exit(0);
 				}
 
-			} else if (gameState == 1) {
+			} else if ((gameState == 1) || (gameState == 4)) {
 				shooting = true;
 
 				// death screen buttons
-			} else if ((gameState == 2) && (tempX >= 590) && (tempX <= 690) && (tempY >= 340)
-					&& (tempY <= 410)) {
-				changeState(0);
-			} else if ((gameState == 2) && (tempX >= 590) && (tempX <= 690) && (tempY >= 370)
-					&& (tempY <= 460)) {
-				System.exit(0);
+			} else if ((gameState == 2) && (tempX >= 590) && (tempX <= 690)) {
 
+				if ((tempY >= 340) && (tempY <= 410)) {
+					changeState(0);
+				} else if ((tempY >= 370) && (tempY <= 460)) {
+					System.exit(0);
+				}
 				// win screen buttons
-			} else if ((gameState == 3) && (tempX >= 590) && (tempX <= 690) && (tempY >= 340)
-					&& (tempY <= 410)) {
-				changeState(0);
-			} else if ((gameState == 3) && (tempX >= 590) && (tempX <= 690) && (tempY >= 370)
-					&& (tempY <= 460)) {
-				System.exit(0);
+			} else if ((gameState == 3) && (tempX >= 590) && (tempX <= 690)) {
+				if ((tempY >= 340) && (tempY <= 410)) {
+					changeState(0);
+				} else if ((tempX <= 690) && (tempY >= 370) && (tempY <= 460)) {
+					System.exit(0);
+				}
 			}
-
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			if (gameState == 1) {
+			if ((gameState == 1) || (gameState == 4)) {
 				shooting = false;
 			}
 

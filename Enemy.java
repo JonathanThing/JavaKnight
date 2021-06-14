@@ -39,7 +39,7 @@ abstract class Enemy extends Character {
  }
 
 
- public abstract void attack(Player player,BufferedImage sprite);
+ public abstract void attack(Player player);
  
  
 

@@ -12,7 +12,7 @@ class Skeleton extends Enemy {
  private long lastShot;
  private Player player;
  
- public void shoot(Player player, BufferedImage sprite) {
+ public void shoot(Player player) {
   int playerX = (int) (player.getX());
   int playerY = (int) (player.getY());
 
@@ -27,10 +27,10 @@ class Skeleton extends Enemy {
   
   if (this.getName().equals("eliteSkeleton")) {
    for (int i = 0 ; i < 4; i++) {
-    this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", sprite, 20, xChange+Math.random()*-2 + 1, yChange+Math.random()*-2 + 1));
+    this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20, xChange+Math.random()*-2 + 1, yChange+Math.random()*-2 + 1));
    }
   } else {
-   this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", sprite, 20, xChange, yChange));
+   this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20, xChange, yChange));
 
   }
  }
@@ -58,10 +58,10 @@ class Skeleton extends Enemy {
   lastShot = System.nanoTime();
  }
 
- public void attack(Player player, BufferedImage sprite) {
+ public void attack(Player player) {
   
   if (System.nanoTime()-lastShot >= 1e9 * this.getWeapon().getFireRate()) {
-   this.shoot(player, sprite); 
+   this.shoot(player); 
    lastShot = System.nanoTime();
   }
  }
