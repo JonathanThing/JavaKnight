@@ -1,20 +1,34 @@
-import java.awt.image.BufferedImage; 
+import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.util.ArrayList;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-abstract class Character extends Entity{
+abstract class Character extends Entity {
 
-  //Weapon
+ private ArrayList<Projectile> projectilesList = new ArrayList<Projectile>();
 
-  private Weapon weapon;
-  
-  Character(double x, double y, int width, int height, String name, double health, String weapon){
-  //Character(int x, int y, int width, int height, BufferedImage sprite, String name, double health, String weapon){
-    super(x, y, width, height, name, health);
-    //super(x, y, width, height, sprite, name, health);
+ // Weapon
+ private Weapon weapon;
 
-  }
+ Character(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
+  // Character(int x, int y, int width, int height, BufferedImage sprite, String
+  // name, double health, String weapon){
+  super(x, y, width, height, name, sprite, health);
+  this.weapon = weapon;
 
+ }
+
+ public Weapon getWeapon() {
+  return this.weapon;
+ }
+
+ public void setWeapon(Weapon weapon) {
+  this.weapon = weapon;
+ }
+
+ public ArrayList<Projectile> getProjectilesList() {
+  return projectilesList;
+ }
 }

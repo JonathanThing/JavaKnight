@@ -39,9 +39,9 @@ abstract class Entity extends GameObject implements Moveable{
   }
   
   //Constructor
-  Entity(double x, double y, int width, int height, String name, double health){
+  Entity(double x, double y, int width, int height, String name, BufferedImage sprite, double health){
   //Entity(int x, int y, int width, int height, BufferedImage sprite, String name, double health){
-    super(x, y, width,  height, name);
+    super(x, y, width,  height, name, sprite );
     //super(x, y, width,  height, sprite, name);
     this.health = health;
   }

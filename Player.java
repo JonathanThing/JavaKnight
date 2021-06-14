@@ -2,164 +2,184 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
 import java.io.File;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.lang.Math;
 
 class Player extends Character {
 
-	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
+ // sprite
+ private BufferedImage sprite;
 
-	// sprite
-	private BufferedImage sprite;
+ // load sprite
+ public void loadSprite() {
+  try {
 
-	// ammo
-	private double ammo;
+  } catch (Exception e) {
+   System.out.println("error loading sprite");
+  }
+  ;
+ }
 
-	// get ammo
-	public double getAmmo() {
-		return this.ammo;
-	}
+ public void laserBeam(Graphics g, int x, int y, double offSetX, double offSetY) {
 
-	// load sprite
-	public void loadSprite() {
-		try {
+  g.setColor(Color.RED);
+  g.drawLine((int) (this.getX() - offSetX), (int) (this.getY() - offSetY), (int) (x - offSetX),
+    (int) (y - offSetY));
+  g.setColor(Color.BLACK);
+ }
 
-		} catch (Exception e) {
-			System.out.println("error loading sprite");
-		}
-		;
-	}
+ // draw
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-	// draw
-	public void draw(Graphics g, double offSetX, double offSetY) {
+  g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null);
+ }
 
-		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
+ // create projectiles
+ public void shoot(double targetX, double targetY, BufferedImage sprite) {
 
-	// create projectiles
-	public void shoot(double targetX, double targetY) {
-		double xDifference = targetX - getX();
-		double yDifference = targetY - getY();
+  double xDifference = targetX - this.getX();
+  double yDifference = targetY - this.getY();
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+  double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double xChange = ((xDifference / hyp) * 60);
-		double yChange = ((yDifference / hyp) * 60);
+  double xChange = ((xDifference / hyp) * 30);
+  double yChange = ((yDifference / hyp) * 30);
 
-		playerProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
-	}
+  if (this.getWeapon().getName().equals("shotgun")) {
+   
+   
+   
+   for (int i = 0; i < 8; i++) {
+    this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(),
+      this.getWeapon().getSize(), "Bullet",sprite, 20, xChange + Math.random() * (-16) + 8, yChange + Math.random() * (-16) + 8));
+   }
+  } else if (this.getWeapon().getName().equals("smg")) {
+   this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+     "Bullet",sprite, 20, xChange + Math.random() * (-2) + 1, yChange + Math.random() * (-4) + 1));
 
-	// move projectiles
-	public void moveProjectile() {
+  } else {
+   this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+     "Bullet",sprite, 20, xChange, yChange));
+  }
+ }
 
-		for (int i = 0; i < playerProjectiles.size(); i++) {
+ // move projectiles
+ public void moveProjectile() {
 
-			(playerProjectiles.get(i)).moveDown((playerProjectiles.get(i)).getChangeY());
-			(playerProjectiles.get(i)).moveRight((playerProjectiles.get(i)).getChangeX());
+  for (int i = 0; i < this.getProjectilesList().size(); i++) {
 
-		}
+   (getProjectilesList().get(i)).moveDown((getProjectilesList().get(i)).getChangeY());
+   (getProjectilesList().get(i)).moveRight((getProjectilesList().get(i)).getChangeX());
 
-	}
+  }
 
-	// draw projectiles
-	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
-		}
-	}
+ }
 
-	public void removeProjectile(int i) {
-		playerProjectiles.remove(i);
-	}
+ // draw projectiles
+ public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
+  for (int i = 0; i < getProjectilesList().size(); i++) {
+   (getProjectilesList().get(i)).draw(g, offSetX, offSetY);
+  }
+ }
 
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
+ public void removeProjectile(int i) {
+  getProjectilesList().remove(i);
+ }
 
-		double xMove = 0;
-		double yMove = 0;
+ public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list,
+   Environment[][] map) {
 
-		if (up) {
-			yMove += 1;
-		}
+  double xMove = 0;
+  double yMove = 0;
 
-		if (down) {
-			yMove -= 1;
-		}
+  if (up) {
+   yMove += 1;
+  }
 
-		if (left) {
-			xMove -= 1;
-		}
+  if (down) {
+   yMove -= 1;
+  }
 
-		if (right) {
-			xMove += 1;
-		}
+  if (left) {
+   xMove -= 1;
+  }
 
-		double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
+  if (right) {
+   xMove += 1;
+  }
 
-		if (hyp != 0) {
+  double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
 
-			this.moveRight((xMove / hyp) * 10);
+  if (hyp != 0) {
 
-			if (collision(list, map)) {
+   this.moveRight((xMove / hyp) * 5);
 
-				this.moveLeft((xMove / hyp) * 10);
-			}
+   if (collision(list, map)) {
 
-			this.moveUp((yMove / hyp) * 10);
+    this.moveLeft((xMove / hyp) * 5);
+   }
 
-			if (collision(list, map)) {
+   this.moveUp((yMove / hyp) * 5);
 
-				this.moveDown((yMove / hyp) * 10);
+   if (collision(list, map)) {
 
-			}
+    this.moveDown((yMove / hyp) * 5);
 
-		}
+   }
 
-	}
+  }
 
-	public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
+ }
 
-		for (int i = 0; i < a.size(); i++) {
-			if (this.getCollision().intersects(a.get(i).getCollision())) {
-				return true;
-			}
-		}
+ public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
 
-		for (int i = 0; i < b.length; i++) {
-			for (int j = 0; j < b[0].length; j++) {
-				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+  for (int i = 0; i < a.size(); i++) {
+   if (this.getCollision().intersects(a.get(i).getCollision())) {
+    return true;
+   }
+  }
 
-	public boolean wasHit(Enemy a) {
+  for (int i = 0; i < b.length; i++) {
+   for (int j = 0; j < b[0].length; j++) {
+    if ((b[i][j] != null) && (!b[i][j].getName().equals("winblock")) && (this.getCollision().intersects(b[i][j].getCollision()))) {
+     return true;
+    }
+   }
+  }
+  return false;
+ }
 
-		for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
+ public boolean wasHit(Enemy a) {
 
-			if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
+  for (int i = 0; i < (a.getProjectilesList()).size(); i++) {
 
-				a.enemyProjectiles.remove(i);
+   if (a.getProjectilesList().get(i).getHitbox().intersects(this.getHitbox())) {
 
-				return true;
-			}
+    a.getProjectilesList().remove(i);
 
-		}
+    return true;
+   }
 
-		return false;
-	}
+  }
 
-	// constructor
-	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
-		// Player(int x, int y, int width, int height, BufferedImage sprite, String
-		// name, double health, String weapon, double ammo){
-		super(x, y, width, height, name, health, weapon);
-		// super(x, y, width,height, sprite, name, health, weapon);
-		this.ammo = ammo;
-		loadSprite();
-	}
+  return false;
+ }
+ 
+ public Rectangle getAggro() {
+  return new Rectangle((int)this.getX() - (32*40)/2, (int) this.getY() - (32*35)/2, 32*40, 32*35);
+ }
+
+ // constructor
+ Player(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
+  // Player(int x, int y, int width, int height, BufferedImage sprite, String
+  // name, double health, String weapon, double ammo){
+  super(x, y, width, height, name, sprite, health, weapon);
+  // super(x, y, width,height, sprite, name, health, weapon);
+  loadSprite();
+ }
 
 }

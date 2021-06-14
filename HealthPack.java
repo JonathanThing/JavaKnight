@@ -6,27 +6,27 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class HealthPack extends Pickups {
+class HealthPack extends Items {
 
-	private Rectangle healthPack;
+ private Rectangle healthPack;
 
-	HealthPack(int x, int y, int width, int height, String name) {
-		super(x, y, width, height, name);
-	}
+ HealthPack(int x, int y, int width, int height, String name, BufferedImage sprite) {
+  super(x, y, width, height, name, sprite);
+ }
 
-	public void draw(Graphics g, double offSetX, double offSetY) {
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-		g.setColor(Color.GREEN);
-		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
+  g.setColor(Color.GREEN);
+  g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
+ }
 
-	public boolean checkCollision(Player p) {
-		if (this.getCollision().intersects(p.getCollision())) {
-			return true;
-		}
-		
-		return false;
+ public boolean checkCollision(Player p) {
+  if (this.getCollision().intersects(p.getCollision())) {
+   return true;
+  }
+  
+  return false;
 
-	}
+ }
 
 }
