@@ -133,7 +133,7 @@ public class Game extends JFrame {
 		weapons = new Weapon[6];
 
 		// Player Weapons
-		weapons[0] = new Weapon(0, 0, 32, 32, "pistol", sprites.get(8), 30, 0.4, 10);
+		weapons[0] = new Weapon(0, 0, 26, 26, "pistol", sprites.get(8), 30, 0.4, 10);
 		weapons[1] = new Weapon(0, 0, 32, 32, "smg", sprites.get(9), 10, 0.1, 10);
 		weapons[2] = new Weapon(0, 0, 58, 20, "shotgun", sprites.get(10), 15, 1, 10);
 
