@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Wall extends Environment {
+
   
 //constructor
   Wall(double x, double y, String name, BufferedImage sprite) {
@@ -68,6 +69,7 @@ public class Wall extends Environment {
    * method to detect if player touches the win block (win be overriden in WinBlock)
    * @param p, the player
    */
+
   public boolean playerWin(Player p){
     return true;
   }

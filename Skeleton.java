@@ -1,3 +1,4 @@
+
 /**
  * [Skeleton.java]
  * Description: The class for skeletons
@@ -44,8 +45,7 @@ class Skeleton extends Enemy {
   } else {
    this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", sprite, 20, xChange, yChange)); //only shoot 1 if the skeleton is normal
 
-  }
- }
+
 
   /**
   * moveProjectile
@@ -57,10 +57,6 @@ class Skeleton extends Enemy {
 
    (this.getProjectilesList().get(i)).moveUp((this.getProjectilesList().get(i)).getChangeY()); //moves the projectils on the y-axis
    (this.getProjectilesList().get(i)).moveLeft((this.getProjectilesList().get(i)).getChangeX()); //moves the projectils on the x-axis
-
-  }
-
- }
 
  /**
   * drawPlayerProjectile

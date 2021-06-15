@@ -1,9 +1,11 @@
+
 /**
  * [Zombie.java]
  * Description: The class for zombies
  * @author Jonathan, Ray, Wajeeh
  * @version 1.0, June 5, 2021
  */ 
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -48,8 +50,7 @@ class Zombie extends Enemy {
    this.moveDown(yChange); //move back to previous position if zombie hits something
 
   }
- }
-
+ 
    /**
   * collision
   * @param player, the player, a, arrayList of enemies, b, array for map
@@ -87,9 +88,9 @@ class Zombie extends Enemy {
   lastHit = System.nanoTime();
  }
 
- @Override
  public void attack(Player player, BufferedImage sprite) {
-  // TODO Auto-generated method stub
+
+
   
  }
 

@@ -1,3 +1,4 @@
+
 /**
  * [Enviroment.java]
  * Description: The class for any object on the map
@@ -13,7 +14,6 @@ public abstract class Environment extends GameObject {
 
  Environment(double x, double y, int width, int height, String name, BufferedImage sprite) {
   super(x, y, width, height, name, sprite);
-
  }
  
   /**
@@ -32,6 +32,7 @@ public abstract class Environment extends GameObject {
    * playerWin
    * abstract method to detect if a player touches it
    */
+
   public abstract boolean playerWin(Player p);
  
 }

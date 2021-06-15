@@ -13,11 +13,12 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 class HealthPack extends GameObject {
-
+  
 //constructor 
  HealthPack(int x, int y, int width, int height, String name, BufferedImage sprite) {
   super(x, y, width, height, name, sprite);
  }
+
 
   /**
    * draw

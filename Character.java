@@ -1,3 +1,4 @@
+
 /**
  * [Character.java]
  * Description: The class for any entities that have a weapon
