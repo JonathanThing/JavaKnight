@@ -175,11 +175,9 @@ public class Game extends JFrame {
 		preMadeMaps[1] = "1-2.txt";
 		preMadeMaps[2] = "1-3.txt";
 
-		// Assianing the current map to be the first map
-		mapName = preMadeMaps[selectedMapIndex];
-
+		
 		// Initializes Map
-		mapInit("maps/" + mapName);
+		mapInit("maps/" + preMadeMaps[0]);
 
 		EventQueue.invokeLater(() ->
 
@@ -927,7 +925,7 @@ public class Game extends JFrame {
 	    if (gameState == 0) { //If state == menu, initialize menu
 	      menuInit();
 	      
-	    } else if ((gameState == 1) || (gameState == 4) || (gameState == 5)) { //If state == level 1/level 2/level 3, initialize game
+	    } else if (gameState == 1) { //If state == level 1/level 2/level 3, initialize game
 	      gameInit();
 	      
 	    } else if (gameState == 2) { //If state == death, initialize the death/loss screen
