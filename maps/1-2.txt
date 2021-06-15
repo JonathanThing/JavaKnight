@@ -15,7 +15,7 @@ ww                   wwww           wwww    ww       ww   ww
 ww                  wwwww           wwwww   ww       ww   ww
 ww                  wwww     www     wwww                 ww
 ww                          wwwww                         ww
-ww s                        wwwww                         ww
+ww s           z            wwwww                   s     ww
 ww                          wwwww                         ww
 ww                  wwww     www     wwww  wwwwwwwwwwwww  ww
 ww                  wwwww           wwwww  wwwwwwwwwwwww  ww
@@ -24,19 +24,19 @@ ww                   wwwww         wwwww   ww z z z z ww  ww
 ww    ww      ww      wwwwww     wwwwww    ww         ww  ww
 ww    ww      ww      wwwwwww   wwwwwww                   ww
 ww                     wwwwww   wwwwww                    ww
-ww                       wwww   wwww      ww           s  ww
+ww                       wwww z wwww      ww           s  ww
 ww  s     s       s        ww   ww        ww              ww
 ww                       z ww   ww               ww       ww
 ww    z               z    ww   ww               ww       ww
-ww                         ww                             ww
+ww                         ww z                           ww
 wwwwwwwwwww  wwwwwwwwwwwwwwww        ww                   ww
 wwwwwwwwwww  wwwwwwwwwwwwwwww   ww   ww                s  ww
 ww                      z  ww z ww            ww          ww
 ww                         ww   ww            ww          ww
 ww  w       w     wwwwwwwwwwwwwwwwwwwwwww                 ww
 ww               wwwwwwwwwwwwwwwwwwwwwwwww                ww
-ww              www                     www               ww
-ww             www                       www              ww
+ww              www     z        z      www               ww
+ww       z     www                       www              ww
 ww             ww    ww             ww    ww           s  ww
 ww             ww   wwww           wwww   wwwwswwww       ww
 ww  w       w  ww   wwww           wwww   wwww wwww       ww
@@ -55,7 +55,7 @@ ww                       www   www                 ww     ww
 ww                       www   www                 ww     ww
 ww                      www     www                       ww
 ww           s ww        www   www        ww s            ww
-ww zz www      ww        www b www        ww              ww
+ww zz www      ww        www b www        ww       z      ww
 ww    www      ww        www   www        ww              ww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
