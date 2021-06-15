@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class HealthPack extends Items {
+class HealthPack extends GameObject {
 
  private Rectangle healthPack;
 

@@ -4,7 +4,7 @@ import java.io.File;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class Weapon extends Items {
+class Weapon extends GameObject {
 
  private int size;
  // damage this weapon deals
