@@ -1,56 +1,63 @@
-import java.awt.image.BufferedImage; 
-import javax.imageio.ImageIO;
-import java.io.File;
+/**
+ * [Weapon.java]
+ * Description: The class for weapons
+ * @author Jonathan, Ray, Wajeeh
+ * @version 1.0, June 9, 2021
+ */
+import java.awt.image.BufferedImage;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
-class Weapon extends Items{
 
-  //damage this weapon deals
-  private double damage;
+class Weapon extends GameObject {
 
-  //rate at which this weapon can be used
-  private double fireRate;
+  //size of the weapon
+ private int size;
+ 
+ // damage this weapon deals
+ private double damage;
 
-  //range of the weapon
-  private double range;
+ // rate at which this weapon can be used
+ private double fireRate;
 
-  //type of ammo
-  String ammoType;
+ /**
+  * getDamage
+  * @return this.damage, the damage this weapon deals
+  */
+ public double getDamage() {
+  return this.damage;
+ }
+
+ /**
+  * getFireRate
+  * @return this.fireRate, the rate at which this weapon can fire
+  */
+ public double getFireRate() {
+  return this.fireRate;
+ }
+
+ /**
+  * getSize
+  * @return this.size, the size of the weapon
+  */
+ public int getSize() {
+  return this.size;
+ }
   
-  public double getDamage(){
-    return this.damage;
-  }
-  
-  public double getFireRate(){
-    return this.fireRate;
-  }
-  
-  public double getRange(){
-    return this.range;
-  }
-  
-  public String getAmmoType(){
-    return this.ammoType;
-  }
-  
-  public void drawWeapon(Graphics g){
-    g.fillRect((int) getX(), (int) getY(), getWidth(), getHeight());
-  }
+ // constructor
+ Weapon(int x, int y, int width, int height, String name, BufferedImage sprite, double damage, double fireRate, int size) {
+  super(x, y, width, height, name, sprite);
+  this.damage = damage;
+  this.fireRate = fireRate;
+  this.size = size;
+ }
 
-  //constructor 
-  Weapon(int x, int y, int width, int height,String name, double damage, double fireRate, double range, String ammoType){
-    super(x, y, width,  height, name);
-    this.damage = damage;
-    this.fireRate = fireRate;
-    this.range = range;
-    this.ammoType = ammoType;
-  }
-
-@Override
-public void draw(Graphics g, double offSetX, double offSetY) {
-	// TODO Auto-generated method stub
-	
-}
+  /**
+   * draw
+   * method to draw the healthpack
+   * @param g the graphics object, offSetX how much the x is off by, offSetY how much the y is off by
+   */
+ public void draw(Graphics g, double offSetX, double offSetY) {
+   g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null); //draw the weapon
+ }
 
 }

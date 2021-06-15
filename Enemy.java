@@ -1,78 +1,60 @@
+/**
+ * [Enemy.java]
+ * Description: The class for enemies
+ * @author Jonathan, Ray, Wajeeh
+ * @version 1.0, May 28, 2021
+ */
+
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.ArrayList;
-import java.awt.Rectangle;
-
-class Enemy extends Character {
-
-	public ArrayList<Projectile> enemyProjectiles;
-
-	private Player player;
-
-	public void draw(Graphics g, double offSetX, double offSetY) {
-
-		g.setColor(Color.RED);
-		g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
-
-	public boolean getHit(Player player) {
-
-		for (int i = 0; i < (player.playerProjectiles).size(); i++) {
-
-			if (player.playerProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
-
-				return true;
-			}
-
-		}
-
-		return false;
-	}
 
 
-	public void shoot(Player player) {
-		int playerX = (int) (player.getX());
-		int playerY = (int) (player.getY());
+abstract class Enemy extends Character {
 
-		double xDifference = getX() - player.getX();
-		double yDifference = getY() - player.getY();
+  /**
+   * draw
+   * method to draw the enemy
+   * @param g, the graphics object, offSetX, how much the x is off by, offSetY, how much the y is off by
+   */
+ public void draw(Graphics g, double offSetX, double offSetY) {
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+  g.setColor(Color.RED);
+  g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null);
+ }
 
-		double xChange = ((xDifference / hyp)*10);
-		double yChange = ((yDifference / hyp)*10);
+ /**
+  * getHit
+  * method to detect if a player projectile hits the enemy and reduces health as well if hit
+  * @param player, the player
+  */
+ public void getHit(Player player) {
 
-		enemyProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
-	}
+  for (int i = 0; i < (player.getProjectilesList()).size(); i++) {
 
-	public void moveProjectile() {
+   if (player.getProjectilesList().get(i).getHitbox().intersects(this.getHitbox())) {
+    
+    this.setHealth(this.getHealth() - player.getWeapon().getDamage());
+    player.getProjectilesList().remove(i);
+   }
 
-		for (int i = 0; i < this.enemyProjectiles.size(); i++) {
+  }
+  
+ }
 
-			(this.enemyProjectiles.get(i)).moveUp((this.enemyProjectiles.get(i)).getChangeY());
-			(this.enemyProjectiles.get(i)).moveLeft((this.enemyProjectiles.get(i)).getChangeX());
 
-		}
-
-	}
-
-	public void drawEnemyProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < enemyProjectiles.size(); i++) {
-			(enemyProjectiles.get(i)).draw(g, offSetX, offSetY);
-		}
-	}
-
-	Enemy(double x, double y, int width, int height, String name, double health, String weapon, Player player) {
-		// Enemy(int x, int y, int width, int height, BufferedImage sprite, String name,
-		// double health, String weapon, Player player){
-		super(x, y, width, height, name, health, weapon);
-		// super(x, y, width, height, sprite, name, health, weapon);
-		
-		enemyProjectiles = new ArrayList<Projectile>();
-		 
-	}
+ /**
+  * attack
+  * abstract method to attack the player
+  * @param player, the player
+  */
+ public abstract void attack(Player player);
+ 
+ 
+//constructor 
+ Enemy(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
+  super(x, y, width, height, name, sprite, health, weapon);
+   
+ }
 
 }
