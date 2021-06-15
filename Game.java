@@ -1,10 +1,15 @@
+/**
+ * [Game.java]
+ * The main file for the game Java Knight.
+ * Java Knight is a 2d top down shooter game where the player fight
+ * enemies and attempts to reach the end of the level.
+ * The player can either choose to play the premade levels or create
+ * their own levels and play them using the map editor. * 
+ * @author Jonathan, Ray, Wajeeh
+ * @version 1.0, May 31, 2021
+ */
 
 //Graphics &GUI imports
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.awt.FontMetrics;
-
 import javax.imageio.ImageIO;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -12,11 +17,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
+
+//File I/O
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.awt.FontMetrics;
 
 //Keyboard imports
 import java.awt.event.KeyEvent;
@@ -27,6 +37,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.event.MouseEvent;
+import java.awt.Point;
 
 //Import ArrayList
 import java.util.ArrayList;
@@ -37,49 +48,51 @@ import java.lang.Math;
 
 public class Game extends JFrame {
 
-	/****************** CLASS VARIABLES *******************/
-	/** The variables can be accessed across all methods **/
-	/******************************************************/
-	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>();
-	static ArrayList<HealthPack> healthPacks = new ArrayList<HealthPack>();
-	static ArrayList<BufferedImage> sprites = new ArrayList<BufferedImage>();
-	static Weapon[] weapons;
-	static Environment[][] map;
+	// Class Variables
+	static ArrayList<Enemy> enemyList = new ArrayList<Enemy>(); // Array List storing Enemies
+	static ArrayList<HealthPack> healthPacks = new ArrayList<HealthPack>(); // Array List storing Healthpacks
+	static ArrayList<BufferedImage> sprites = new ArrayList<BufferedImage>(); // Array list storing Sprites (more
+																				// efficient)
+
+	static Weapon[] weapons; // Array storing Weapons
+	static Environment[][] map; // 2d array storing the map
+	static Player player; // Player
 
 	static GameAreaPanel gamePanel;
 	static Graphics g;
-	static int gameState = 0; // 0 = Menu, 1 = Game, 2 = dead, 3 = win, 4 = map editor
 
-	static String mapName;
-	static String[] preMadeMaps;
-	static int selectedMapIndex;
+	static int gameState = 0; // Variable to store the gamestate. 0 = Menu, 1 = Game, 2 = dead, 3 = win, 4 =
+								// map editor
 
-	static Scanner input;
-	static Player player;
-	static boolean up, down, left, right;
-	static boolean shooting;
-	static long lastShot;
-	static int mouseX, mouseY;
+	// Map editor variables
+	static String mapName; // Name of the map selected
+	static String[] preMadeMaps; // Array to store the premade maps
+	static int selectedMapIndex; // The index of the array preMadeMaps;
+	static int editorSizeX, editorSizeY; // The Dimensions of the map in the map editor
+	static char[][] editingMap; // 2d Array to store the map in the map editor
+	static char paintBrush; // The current block selected in map editor
 
-	static int offsetXMax, offsetYMax;
-	static int offsetXMin, offsetYMin;
-	static int worldSizeX, worldSizeY;
-	static double offsetX, offsetY;
+	static Scanner input; // Console input
+	static boolean up, down, left, right; // Variables to store if player is moving in certain direction
+	static boolean shooting; // Variable to store if the player is shooting/holding down the mouse
+	static long lastShot; // Variables used to store the last time the player has shot
+	static int mouseX, mouseY; // X and Y positions of the mouse
 
-	static int editorSizeX, editorSizeY;
-	static char[][] editingMap;
-	static char paintBrush;
+	// Camera variables
+	static int offsetXMax, offsetYMax; // Maxmium limit for the position of the camera
+	static int offsetXMin, offsetYMin; // Minium limit for the positoin of the camera
+	static int worldSizeX, worldSizeY; // The dimensions of the world
+	static double offsetX, offsetY; // the position of the camera
 
+	// Fonts
 	static Font title = new Font("Serif", Font.PLAIN, 50);
 	static Font subTitle = new Font("Serif", Font.PLAIN, 25);
 	static Font health = new Font("Serif", Font.PLAIN, 20);
 
+	// Background Image
 	static Image img = Toolkit.getDefaultToolkit().getImage("images/background.jpg");
 
-	/***************************************************************/
-	/** GameFrame - Setups up the Window and Starts displaying it **/
-	/***************************************************************/
-
+	// GameFrame - Setups up the Window and starts displaying it
 	Game() {
 
 		super("My Game");
@@ -121,13 +134,14 @@ public class Game extends JFrame {
 
 	}
 
-	/************************ End of GameFrame ***********************/
-
-	/********************* Main Method ************************/
+	//Main method
 	public static void main(String[] args) throws Exception {
 
+		// Console Scanner
 		input = new Scanner(System.in);
 
+		// Assinging the sprites into a arraylist to save resources and allow easier
+		// spirite access
 		sprites.add(ImageIO.read(new File("images/stonebrick.png"))); // 0
 		sprites.add(ImageIO.read(new File("images/mossystone.png"))); // 1
 		sprites.add(ImageIO.read(new File("images/oakwood.png"))); // 2
@@ -140,6 +154,7 @@ public class Game extends JFrame {
 		sprites.add(ImageIO.read(new File("images/smg.png"))); // 9
 		sprites.add(ImageIO.read(new File("images/shotgun.png"))); // 10
 
+		// Creates the weapons array
 		weapons = new Weapon[6];
 
 		// Player Weapons
@@ -150,14 +165,20 @@ public class Game extends JFrame {
 		// Enemy Weapons
 		weapons[3] = new Weapon(0, 0, 10, 10, "bow", sprites.get(0), 15, 0.8, 10);
 		weapons[4] = new Weapon(0, 0, 10, 10, "buckshot", sprites.get(0), 10, 1, 10);
-
 		selectedMapIndex = 0;
-		preMadeMaps = new String[3];
-		preMadeMaps[0] = "map1.txt";
-		preMadeMaps[1] = "map2.txt";
-		preMadeMaps[2] = "map3.txt";
 
+		// Creates the array that stores the premade maps
+		preMadeMaps = new String[3];
+
+		// Assigning premade maps to the array
+		preMadeMaps[0] = "1-1.txt";
+		preMadeMaps[1] = "1-2.txt";
+		preMadeMaps[2] = "1-3.txt";
+
+		// Assianing the current map to be the first map
 		mapName = preMadeMaps[selectedMapIndex];
+
+		// Initializes Map
 		mapInit("maps/" + mapName);
 
 		EventQueue.invokeLater(() ->
@@ -168,60 +189,73 @@ public class Game extends JFrame {
 		});
 	}
 
+	/**mapInit 
+	 * This method initializes the map
+	 */
 	public static void mapInit(String file) {
-		enemyList.clear();
-		healthPacks.clear();
-		char[][] temp = null;
 
+		enemyList.clear();
+		; // Clears the enemies to prevent overlapping mobs on game restart
+		healthPacks.clear();
+		; // Clears the healthpacks to prevent overlapping mobs on game restart
+
+		char[][] tempMap = null; // Initializes map variable
+
+		// Try and Catch for getting the map file
 		try {
-			temp = getMap(file);
-			System.out.println("got file");
+			tempMap = getMap(file); // Asising the temp map to the map in the file
+			System.out.println("Map file acessed sucessfully");
 		} catch (Exception e) {
 
-			System.out.println("it broke");
+			System.out.println("Map file failed to be acessed");
 		}
 
-		map = new Environment[temp.length][temp[0].length];
+		map = new Environment[tempMap.length][tempMap[0].length]; // Creates a map variable with the same size as
+																	// tempMap
 
-		worldSizeX = 32 * temp[0].length + 16;
-		worldSizeY = 32 * temp.length + 32;
+		// Assings the size of the world
+		worldSizeX = 32 * tempMap[0].length + 16; // 32 is the length of one block, and 16 is an offset to make it
+													// display properly
+		worldSizeY = 32 * tempMap.length + 32;
 
-		for (int i = 0; i < temp.length; i++) {
-			for (int j = 0; j < temp[0].length; j++) {
-				switch (temp[i][j]) {
-				case 'w':
-					if (Math.random() >= 0.75) {
+		// Loops through the 2d tempMap array
+		for (int i = 0; i < tempMap.length; i++) {
+			for (int j = 0; j < tempMap[0].length; j++) {
+				switch (tempMap[i][j]) {
+				case 'w': // Creates a Wall object
+					if (Math.random() >= 0.75) { // There is a 25% chance that the wall will be mossy, 75% chance it
+													// will be stone brick
 						map[i][j] = new Wall((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, "wall", sprites.get(1));
 					} else {
 						map[i][j] = new Wall((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, "wall", sprites.get(0));
 					}
 					break;
 
-				case 'b':
+				case 'b': // Creates a win block object
 					map[i][j] = new WinBlock((int) j * 32 + 32 / 2, (int) i * 32 + 32 / 2, "winblock", sprites.get(0));
 					break;
 
-				case 's':
+				case 's': // Creates a skelton enemey
 					enemyList.add(new Skeleton((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "skeleton",
 							sprites.get(4), 100, weapons[3]));
 					break;
 
-				case 'S':
+				case 'S': // Creates an elite skselton enemey
 					enemyList.add(new Skeleton((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "eliteSkeleton",
 							sprites.get(6), 200, weapons[4]));
 					break;
 
-				case 'h':
+				case 'h': // Creates a health pack
 					healthPacks.add(
 							new HealthPack((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "HP", sprites.get(7)));
 					break;
 
-				case 'p':
+				case 'p': // Creates the player
 					player = new Player((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "player", sprites.get(3),
 							100, weapons[0]);
 					break;
 
-				case 'z':
+				case 'z': // creates a zombie
 					enemyList.add(new Zombie((int) j * 32 + 28 / 2, (int) i * 32 + 28 / 2, 28, 28, "zombie",
 							sprites.get(5), 100, weapons[1]));
 					break;
@@ -230,48 +264,65 @@ public class Game extends JFrame {
 		}
 	}
 
+	/**
+	 * getMap 
+	 * This method assigns the map files to a 2d char array
+	 * @param file The file path for the map
+	 * @return Our 2d char array map
+	 */
 	public static char[][] getMap(String file) throws Exception {
 
-		File myFile = new File(file);
+		File myFile = new File(file);// Creates a new file based on the specified location
 
-		// output to message to the user via the console
+		// Output to message to the user via the console
 		System.out.println("Attempting to read data from file: " + file);
 
 		// Create a Scanner and associate it with the file
 		Scanner input = new Scanner(myFile);
 
+		// These variables control row and col length for our map
 		int x = input.nextInt();
 		int y = input.nextInt();
 
-		String line = "";
+		String line = ""; // Sting variable to store lines from the file
 
-		input.nextLine();
+		input.nextLine(); // Flushes the Scanner
 
-		char[][] a = new char[y][x];
+		char[][] map = new char[y][x];
 
-		for (int i = 0; i < y; i++) {
-			line = input.nextLine();
-			// System.out.println(i);
-			for (int j = 0; j < x; j++) {
-				// System.out.println(j);
-				a[i][j] = line.charAt(j);
-				// System.out.println(a[i][j]);
+		for (int i = 0; i < y; i++) { // Loops through the file (rows)
+
+			line = input.nextLine(); // Gets every line of the map in the file
+
+			for (int j = 0; j < x; j++) { // Loops through the column
+
+				map[i][j] = line.charAt(j); // Assigns the chars from the line to map[][]
+
 			}
 		}
 
-		return a;
+		return map; // Return map
 
 	}
 
+	/**
+	 * mapOut This method outputs the text files of the player-made maps
+	 */
 	public void mapOut() throws FileNotFoundException {
 
-		input.nextLine();
-		System.out.print("\nPlease enter the name of the map: ");
-		String fileName = input.nextLine();
-		File myFile = new File("maps/" + fileName);
-		PrintWriter output = new PrintWriter(myFile);
+		input.nextLine(); // Flushes Scanner
 
-		output.println(editorSizeX + " " + editorSizeY);
+		System.out.print("\nPlease enter the name of the map: ");
+
+		String fileName = input.nextLine();// Assign the filename of the outputed file
+
+		File myFile = new File("maps/" + fileName); // Creates a new file located in the maps folder
+
+		PrintWriter output = new PrintWriter(myFile); // PrinterWritter to make print the map into the file
+
+		output.println(editorSizeX + " " + editorSizeY); // Printing the width and height of the map
+
+		// For loop to print out each character of the map into the file
 		for (int i = 0; i < editorSizeY; i++) {
 			for (int j = 0; j < editorSizeX; j++) {
 				output.print(editingMap[i][j]);
@@ -279,28 +330,24 @@ public class Game extends JFrame {
 			output.println();
 		}
 
-		output.close();
+		output.close(); // Closes the Printerwritter and completing the file printing
 
-		changeState(0);
+		changeState(0); // Returns the user to the menu screen
 
 	}
 
-	/****** end of Main *********************************/
-
-	/********************* Animate - Gameloop ************************/
-	/******* This section is where the games state is updated. *******/
-	/*****************************************************************/
+	/**
+	 * animate Repaints the screen and calls methods based on the game state
+	 */
 	public void animate() {
 
-		// Intialize functions
+		while (true) { // Game loop
 
-		while (true) {
-
-			if (gameState == 1) { // Game State
+			if (gameState == 1) { // If in game perform a game tick
 
 				gameTick();
 
-			} else if (gameState == 4) { // Map editor
+			} else if (gameState == 4) { // If in map editor, perform a map editor tick
 				mapEditorTick();
 			}
 
@@ -309,43 +356,56 @@ public class Game extends JFrame {
 
 	}
 
-	/****** End of Animate *********************************/
-
-	// Inner class - JPanel
+	/**
+	 * GameAreaPanel.java 
+	 * Creates and initializes a graphics panel
+	 * @author Jonathan Cai, Ray Chen, Wajeeh Haider
+	 * @version 1.0
+	 * @since May 31st
+	 */
 	private class GameAreaPanel extends JPanel {
 
-		/************************** PaintComponenet ************************/
-		/** This section is where the screen is drawn **/
-		/*******************************************************************/
-
+		/**
+		 * paintComponent 
+		 * This method draws the map		 * 
+		 * @param Graphics g (used to draw to screen)
+		 */
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g); // required
-			setDoubleBuffered(true);
+			setDoubleBuffered(true); // Allows us to use double buffered drawings
 
-			// Call render methods
-			if (gameState == 0) {
+			// Calls the render methods based on gamestate
+			if (gameState == 0) { // Menu state
 				menuRender(g);
 
 			} else if (gameState == 1) { // Game State
 				gameRender(g);
 
-			} else if (gameState == 2) {
+			} else if (gameState == 2) { // Death State
 				deathRender(g);
 
-			} else if (gameState == 3) {
+			} else if (gameState == 3) { // Win State
 				winRender(g);
-			} else if (gameState == 4) {
+
+			} else if (gameState == 4) { // Map editor sate
 				mapEditorRender(g);
 			}
 		}
 	}
 
+	//Intalizing~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~``
+	
+	/**deathInit 
+	 * This method initializes the death screen
+	 */
 	public void deathInit() {
 		setCursor(Cursor.getDefaultCursor());
 	}
 
-	/****** End of paintComponent *********************************/
-
+	/**
+	 * menuInit 
+	 * This method initializes the menu screen
+	 */
 	public void menuInit() {
 
 		player.setHealth(100);
@@ -353,39 +413,59 @@ public class Game extends JFrame {
 		setCursor(Cursor.getDefaultCursor());
 	}
 
+	 /**
+	   * winInit
+	   * This method initializes the win screen
+	   */
 	public void winInit() {
 		setCursor(Cursor.getDefaultCursor());
 	}
 
+	 /**
+	   * gameInit
+	   * This method initializes the game
+	   */
 	public void gameInit() {
 
-		mapInit("maps/" + mapName);
+		mapInit("maps/" + mapName); //Initializes map
 
-		player.setHealth(100);
-		lastShot = System.nanoTime();
+		player.setHealth(100);//Resets Health
+		
+		lastShot = System.nanoTime(); //Finds the delay between shots (cooldown time between shots)
 
-		offsetXMax = worldSizeX - 1280;
-		offsetYMax = worldSizeY - 720;
-		offsetXMin = 0;
-		offsetYMin = 0;
+		 //Camera
+		offsetXMax = worldSizeX - 1280; //Max offset = worldsizeX - resolutionX
+		offsetYMax = worldSizeY - 720; //Max offset = worldsizeY - resolutionY
+		offsetXMin = 0; //Min x offset
+		offsetYMin = 0;//Min y offset
 
+		//Sets the cursor to a crosshair
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(new ImageIcon("images/crosshair.png").getImage(),
 				new Point(16, 16), "crosshair"));
 	}
 
+	/**
+	   * mapEditorInit
+	   * This method initializes the map editor
+	   */
 	public void mapEditorInit() {
+		
+		//Getting world dimensions from the user
 		System.out.print("\nMap editor:\nPlease enter the width of the map in tiles: ");
 		editorSizeX = input.nextInt();
 		System.out.print("\nPlease enter the height of the map in tiles: ");
 		editorSizeY = input.nextInt();
 
+		//Creating the editingMap
 		editingMap = new char[editorSizeY][editorSizeX];
 
 		paintBrush = 0;
 
+		//Setting camera offset to be at 0,0
 		offsetX = 0;
 		offsetY = 0;
 
+		//fils the map with empty characters
 		for (int i = 0; i < editorSizeY; i++) {
 			for (int j = 0; j < editorSizeX; j++) {
 				editingMap[i][j] = ' ';
@@ -396,47 +476,61 @@ public class Game extends JFrame {
 
 	// Updating ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	// Game update
+	 /**
+	   * gameTick
+	   * This method triggers 60x second (60fps) and controls basic game mechanics
+	   */
 	public void gameTick() {
 
+		 //If health equal to or less than 0, trigger the loss screen
 		if (player.getHealth() <= 0) {
 			changeState(2);
 		}
 
+		//Assign the camera offset to the player position
 		offsetX = player.getX() - 1280 / 2;
 		offsetY = player.getY() - 720 / 2;
 
+		//Prevents the offset from being smaller than the min or larger than the max
 		if (offsetX > offsetXMax) {
 			offsetX = offsetXMax;
+
 		} else if (offsetX < offsetXMin) {
 			offsetX = offsetXMin;
+
 		}
+		
 		if (offsetY > offsetYMax) {
 			offsetY = offsetYMax;
+			
 		} else if (offsetY < offsetYMin) {
 			offsetY = offsetYMin;
+			
 		}
 
-		if (shooting && (System.nanoTime() - lastShot >= 1e9 * player.getWeapon().getFireRate())) {
-			player.shoot(mouseX + offsetX, mouseY + offsetY, sprites.get(0));
-			lastShot = System.nanoTime();
+		//Check if both the player is shooting and there has a long enough time until the weapon can fire again
+		if ((shooting) && (System.nanoTime() - lastShot >= 1e9 * player.getWeapon().getFireRate())) {
+			player.shoot(mouseX + offsetX, mouseY + offsetY, sprites.get(0)); 
+			lastShot = System.nanoTime(); //assiging the last time the player has shot as now
 		}
 
+		//Player movment 
 		player.movement(up, down, left, right, enemyList, map);
 
+		//Player's projecetile movment 
 		player.moveProjectile();
 
 		// Enviroment collisons
+		//Loops through the map array
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
 
-				if (map[i][j] != null) {
+				if (map[i][j] != null) { //Only runs when map != null (avoids an error)
 
-					if (map[i][j].getName().equals("wall")) {
+					if (map[i][j].getName().equals("wall")) { //Checks if the players projectile has hit a wall, deletes if it has
 						map[i][j].playerHit(player);
-					} else if (map[i][j].getName().equals("winblock")) {
-						if (map[i][j].playerWin(player)) {
-							// player.setHealth(0);
+					} else if (map[i][j].getName().equals("winblock")) { //Checks for a win block
+						if (map[i][j].playerWin(player)) {//If the player is on the win block, trigger the win state
 							changeState(3);
 						}
 					}
@@ -447,63 +541,72 @@ public class Game extends JFrame {
 		}
 
 		// Enemy
-		for (int i = 0; i < enemyList.size(); i++) {
+		for (int i = 0; i < enemyList.size(); i++) { //Loops through the enemy arraylist
 
-			if (!enemyList.get(i).getName().equals("zombie")) {
-				((Skeleton) enemyList.get(i)).moveProjectile();
-			}
+			if (!enemyList.get(i).getName().equals("zombie")) { //If the enemy isn't a zombie
+		        ((Skeleton) enemyList.get(i)).moveProjectile(); //Move the enemy projectile
+		      }
 
-			// enemy bullet hiting wall;
-			for (int a = 0; a < map.length; a++) {
-				for (int b = 0; b < map[0].length; b++) {
+			//Checks if an enemy bullet has hit a wall
+		      for (int a = 0; a < map.length; a++) { //Loops through the map
+		        
+		        for (int b = 0; b < map[0].length; b++) { //Loops through the map
+		          
+		          if (map[a][b] != null) { 
+		            
+		            if (map[a][b].getName().equals("wall")) { //If the enemy bullet hits a wall, delete it
+		              map[a][b].enemyHit(enemyList.get(i));
+		            }
+		            
+		          }
+		          
+		        }
+		      }
 
-					if (map[a][b] != null) {
-						if (map[a][b].getName().equals("wall")) {
-							map[a][b].enemyHit(enemyList.get(i));
-						}
-					}
+		      //Player
+		      if (player.wasHit(enemyList.get(i))) { //If player was hit
+		        player.setHealth(player.getHealth() - enemyList.get(i).getWeapon().getDamage()); //Set player health to playerHealth - enemy damage
+		      }
 
-				}
-			}
-
-			if (player.wasHit(enemyList.get(i))) {
-				player.setHealth(player.getHealth() - enemyList.get(i).getWeapon().getDamage());
-			}
-
-			enemyList.get(i).getHit(player);
-
-			if ((enemyList.get(i)).getHealth() <= 0) {
-				enemyList.remove(i);
-				break;
-			}
-
-			if (player.getAggro().intersects(enemyList.get(i).getCollision())) {
-				if (!enemyList.get(i).getName().equals("zombie")) {
-					(enemyList.get(i)).attack(player);
-				} else {
-					((Zombie) enemyList.get(i)).move(player, map, enemyList);
-				}
-
-			}
-
-		}
+		      enemyList.get(i).getHit(player); //Checks if enemy was hit by player
+		      
+		      if ((enemyList.get(i)).getHealth() <= 0) { //If enemy health == 0, delete the enemy
+		        enemyList.remove(i);
+		        break;
+		      }
+		      
+		      if (player.getAggro().intersects(enemyList.get(i).getCollision())) { //Checks if the player is in enemy radius
+		        
+		        if (!enemyList.get(i).getName().equals("zombie")) { //If the player is in radius of a skeleton or mega skeleton, it will shoot the player
+		          (enemyList.get(i)).attack(player);
+		          
+		        } else { //If the player is in radius of a zombie, it will go towards the player
+		          ((Zombie) enemyList.get(i)).move(player, map, enemyList);
+		        }
+		        
+		      }
+		      
+		    }
 
 		// HealthPack
-		for (int i = 0; i < healthPacks.size(); i++) {
+		for (int i = 0; i < healthPacks.size(); i++) { //Loops through health pack arraylist
+		      
+		      if ((healthPacks.get(i)).checkCollision(player)) { //Checks if the player collides with a healthpack
+		        
+		        if (player.getHealth() >= 50) { //If your health is >50, set health to 100 (health packs heal 50, and 100 hp is the max), prevents going over max hp
+		          player.setHealth(100);
+		          
+		        } else { //Else if health < 50, heal by 50 
+		          player.setHealth(player.getHealth() + 50);
+		        }
+		        
+		        healthPacks.remove(i); //Remove the healthpack that was collided with
+		        break;
+		      }
+		      
+		    }
 
-			if ((healthPacks.get(i)).checkCollision(player)) {
-				if (player.getHealth() >= 50) {
-					player.setHealth(100);
-				} else {
-					player.setHealth(player.getHealth() + 50);
-				}
-
-				healthPacks.remove(i);
-				break;
-			}
-
-		}
-
+		//Makes it so the game ticks at a certain rate (60 = 60fps)
 		try {
 			Thread.sleep(16); // 16 = 60fps, 33 = 30fps
 		} catch (Exception exc) {
@@ -604,7 +707,7 @@ public class Game extends JFrame {
 		g.setFont(subTitle);
 		drawCenteredString("Play", 1280, 820, g);
 
-		drawCenteredString(preMadeMaps [selectedMapIndex], 1280, 920, g);
+		drawCenteredString(preMadeMaps[selectedMapIndex], 1280, 920, g);
 		drawCenteredString("Map editor", 1280, 1020, g);
 		drawCenteredString("Load map", 1280, 1120, g);
 		drawCenteredString("Quit", 1280, 1220, g);
@@ -710,7 +813,12 @@ public class Game extends JFrame {
 						break;
 					case 'h':
 						tempInt = 7;
-						g.drawImage(sprites.get(2), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null); // Drawing the floor under the healthpack
+						g.drawImage(sprites.get(2), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null); // Drawing
+																												// the
+																												// floor
+																												// under
+																												// the
+																												// healthpack
 						break;
 					case 'p':
 						tempInt = 3;
@@ -790,16 +898,15 @@ public class Game extends JFrame {
 			}
 
 			if (gameState == 0) {
-				
-				if ((e.getKeyChar() == 'a') && (selectedMapIndex>0)) {
+
+				if ((e.getKeyChar() == 'a') && (selectedMapIndex > 0)) {
 					selectedMapIndex--;
 				}
-				
-				if  ((e.getKeyChar() == 'd') && (selectedMapIndex<preMadeMaps.length-1)) {
+
+				if ((e.getKeyChar() == 'd') && (selectedMapIndex < preMadeMaps.length - 1)) {
 					selectedMapIndex++;
 				}
 			}
-			
 
 			if (e.getKeyChar() == '1') {
 				player.setWeapon(weapons[0]);
