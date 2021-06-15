@@ -21,9 +21,9 @@ class Projectile extends Entity{
 	  g.fillRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
 	}
     
-  Projectile(double x, double y, int width, int height,String name, int health, double changeX, double changeY){
+  Projectile(double x, double y, int width, int height,String name, BufferedImage sprite, int health, double changeX, double changeY){
   //Projectile(int x, int y, int width, int height, BufferedImage sprite, String name, int changeX, int changeY){
-    super(x, y, width, height, name, health);
+    super(x, y, width, height, name, sprite, health);
     //super(x, y, width,  height, sprite, name);
     this.changeX = changeX;
     this.changeY = changeY;

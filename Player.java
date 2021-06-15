@@ -1,165 +1,89 @@
+/**
+ * [Player.java]
+ * Description: The class for the player
+ * @author Jonathan, Ray, Wajeeh
+ * @version 1.0, May 28, 2021
+ */
+
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-
 import java.io.File;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.lang.Math;
 
 class Player extends Character {
 
-	static ArrayList<Projectile> playerProjectiles = new ArrayList<Projectile>();
+ // sprite
+ private BufferedImage sprite;
 
-	// sprite
-	private BufferedImage sprite;
+ /**
+  * laserBeam
+  * method to draw the laserBeam
+  * @param g, the graphics object, x, the x coordinate of where the laser ends, y, 
+  * the y coordinate of where the laser ends, offSetX, how much the x is off by, offSetY, how much the y is off 
+  */ 
+ public void laserBeam(Graphics g, int x, int y, double offSetX, double offSetY) {
+   
+  g.setColor(Color.RED); //set color to red
+  g.drawLine((int) (this.getX() - offSetX), (int) (this.getY() - offSetY), (int) (x - offSetX),
+    (int) (y - offSetY)); //draws the laser beam in red
+  g.setColor(Color.BLACK); //set color back to black
+ }
 
-	// ammo
-	private double ammo;
+ /**
+  * draw
+  * method to draw the player
+  * @param g, the graphics object, offSetX, how much the x is off by, offSetY, how much the y is off by
+  */
+ public void draw(Graphics g, double offSetX, double offSetY) {
+  g.drawImage(this.getSprite(), (int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), null);//draws the player
+ }
 
-	// get ammo
-	public double getAmmo() {
-		return this.ammo;
-	}
+ /**
+  * shoot
+  * method to allow the player to shoot
+  * @param targetX, the x coordinate of the target, targetY, the y coordinate of the tagret, sprite, the sprite for the projectile 
+  */
+ public void shoot(double targetX, double targetY, BufferedImage sprite) {
 
-	// load sprite
-	public void loadSprite() {
-		try {
+  double xDifference = targetX - this.getX(); //calculate the difference in x
+  double yDifference = targetY - this.getY(); //calculate the difference in y
 
-		} catch (Exception e) {
-			System.out.println("error loading sprite");
-		}
-		;
-	}
+  double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2)); //calculate hypotenuse to normalize the vector
 
-	// draw
-	public void draw(Graphics g, double offSetX, double offSetY) {
+  double xChange = ((xDifference / hyp) * 30); //calculate how much the x coord will change
+  double yChange = ((yDifference / hyp) * 30); //calculate how much the y coord will change
 
-		g.drawRect((int) (getX() - getWidth() / 2 - offSetX), (int) (getY() - getHeight() / 2 - offSetY), getWidth(), getHeight());
-	}
+  if (this.getWeapon().getName().equals("shotgun")) { //if the player is using the shotgun
+   
+   for (int i = 0; i < 8; i++) {
+    this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(),
+      this.getWeapon().getSize(), "Bullet",sprite, 20, xChange + Math.random() * (-16) + 8, yChange + Math.random() * (-16) + 8)); //add projectiles to arrayList
+   }
+  } else if (this.getWeapon().getName().equals("smg")) { //if the player is using the smg
+   this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+     "Bullet",sprite, 20, xChange + Math.random() * (-2) + 1, yChange + Math.random() * (-4) + 1)); //add projectiles to arrayList
 
-	// create projectiles
-	public void shoot(double targetX, double targetY) {
-		double xDifference = targetX - getX();
-		double yDifference = targetY - getY();
+  } else { //if the player is using the pistol
+   this.getProjectilesList().add(new Projectile(getX(), getY(), this.getWeapon().getSize(), this.getWeapon().getSize(),
+     "Bullet",sprite, 20, xChange, yChange)); //add projectiles to arrayList
+  }
+ }
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+ /**
+  * moveProjectile
+  * method to move the projectiles
+  */
+ public void moveProjectile() {
 
-		double xChange = ((xDifference / hyp) * 60);
-		double yChange = ((yDifference / hyp) * 60);
+  for (int i = 0; i < this.getProjectilesList().size(); i++) { //loops through arrayList of projectiles
 
-		playerProjectiles.add(new Projectile(getX(), getY(), 25, 25, "Bullet", 20, xChange, yChange));
-	}
-
-	// move projectiles
-	public void moveProjectile() {
-
-		for (int i = 0; i < playerProjectiles.size(); i++) {
-
-			(playerProjectiles.get(i)).moveDown((playerProjectiles.get(i)).getChangeY());
-			(playerProjectiles.get(i)).moveRight((playerProjectiles.get(i)).getChangeX());
-
-		}
-
-	}
-
-	// draw projectiles
-	public void drawPlayerProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < playerProjectiles.size(); i++) {
-			(playerProjectiles.get(i)).draw(g,offSetX,offSetY);
-		}
-	}
-
-	public void removeProjectile(int i) {
-		playerProjectiles.remove(i);
-	}
-
-	public void movement(boolean up, boolean down, boolean left, boolean right, ArrayList<Enemy> list, Environment[][] map) {
-
-		double xMove = 0;
-		double yMove = 0;
-
-		if (up) {
-			yMove += 1;
-		}
-
-		if (down) {
-			yMove -= 1;
-		}
-
-		if (left) {
-			xMove -= 1;
-		}
-
-		if (right) {
-			xMove += 1;
-		}
-
-		double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
-
-		if (hyp != 0) {
-
-			this.moveRight((xMove / hyp) * 10);
-
-			if (collision(list, map)) {
-
-				this.moveLeft((xMove / hyp) * 10);
-			}
-
-			this.moveUp((yMove / hyp) * 10);
-
-			if (collision(list, map)) {
-
-				this.moveDown((yMove / hyp) * 10);
-
-			}
-
-		}
-
-	}
-
-	public boolean collision(ArrayList<Enemy> a, Environment[][] b) {
-
-		for (int i = 0; i < a.size(); i++) {
-			if (this.getCollision().intersects(a.get(i).getCollision())) {
-				return true;
-			}
-		}
-
-		for (int i = 0; i < b.length; i++) {
-			for (int j = 0; j < b[0].length; j++) {
-				if ((b[i][j] != null ) && (this.getCollision().intersects(b[i][j].getCollision()))) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public boolean wasHit(Enemy a) {
-
-		for (int i = 0; i < (a.enemyProjectiles).size(); i++) {
-
-			if (a.enemyProjectiles.get(i).getHitbox().intersects(this.getHitbox())) {
-
-				a.enemyProjectiles.remove(i);
-
-				return true;
-			}
-
-		}
-
-		return false;
-	}
-
-	// constructor
-	Player(double x, double y, int width, int height, String name, double health, String weapon, double ammo) {
-		// Player(int x, int y, int width, int height, BufferedImage sprite, String
-		// name, double health, String weapon, double ammo){
-		super(x, y, width, height, name, health, weapon);
-		// super(x, y, width,height, sprite, name, health, weapon);
-		this.ammo = ammo;
-		loadSprite();
-	}
+   (getProjectilesList().get(i)).moveDown((getProjectilesList().get(i)).getChangeY()); //moves the projectils on the y-axis
+   (getProjectilesList().get(i)).moveRight((getProjectilesList().get(i)).getChangeX()); //moves the projectils on the x-axis
+ }
 
 }
