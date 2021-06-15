@@ -1,18 +1,22 @@
-
 //Graphics &GUI imports
 import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+
 import java.awt.FontMetrics;
 
 import javax.imageio.ImageIO;
 import java.awt.Image;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Toolkit;
 import java.awt.Graphics;
+
 import java.awt.Point;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -971,6 +975,3 @@ public class Game extends JFrame {
 		}
 
 	}
-
-	/****** Mouse Listener *********************************/
-}

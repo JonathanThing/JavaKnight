@@ -109,6 +109,7 @@ abstract class GameObject{
   /**
    * draw
    * abstract method to draw the object
+   * @param g, the graphics object, offSetX, how much the x is off by, offSetY, how much the y is off by
    */
   public abstract void draw (Graphics g,  double offSetX, double offSetY);
   
