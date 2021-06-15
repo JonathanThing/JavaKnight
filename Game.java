@@ -615,8 +615,13 @@ public class Game extends JFrame {
 
 	}
 
+	/**
+	   * mapEditorTick
+	   * This method triggers 60x second (60fps) and updates the map editor
+	   */
 	public void mapEditorTick() {
 
+		//movment of the camera
 		double xMove = 0;
 		double yMove = 0;
 
@@ -636,8 +641,10 @@ public class Game extends JFrame {
 			xMove += 1;
 		}
 
+		//Finding the hypotenuse
 		double hyp = Math.sqrt(Math.pow(xMove, 2) + Math.pow(yMove, 2));
 
+		//normalizing the vector so that the camera travels at a constant speed
 		if (hyp != 0) {
 
 			offsetX += ((xMove / hyp) * 5);
@@ -645,33 +652,35 @@ public class Game extends JFrame {
 			offsetY -= ((yMove / hyp) * 5);
 		}
 
+		//The current tile the user has its mouse over
 		int tileX = (int) ((mouseX + offsetX) / 32);
 		int tileY = (int) ((mouseY + offsetY) / 32);
 
+		//If the user is both holding the mouse and is over a tile
 		if ((shooting) && (tileX < editorSizeX && tileX >= 0) && (tileY < editorSizeY && tileY >= 0)) {
 			switch (paintBrush) {
-			case 2: // Nothing
+			case 2: // Add a floor to the map
 				editingMap[tileY][tileX] = ' ';
 				break;
-			case 0: // Wall
+			case 0: // Add a Wall to the map
 				editingMap[tileY][tileX] = 'w';
 				break;
-			case 8: // Win Block
+			case 8: // Add a Win Block to the map
 				editingMap[tileY][tileX] = 'b';
 				break;
-			case 3: // Player
+			case 3: // Add a Player to the map
 				editingMap[tileY][tileX] = 'p';
 				break;
-			case 4: // Skeleton
+			case 4: // Add a Skeleton to the map
 				editingMap[tileY][tileX] = 's';
 				break;
-			case 5: // Zombie
+			case 5: // Add a Zombie to the map
 				editingMap[tileY][tileX] = 'z';
 				break;
-			case 6: // Elite Skeleton
+			case 6: // Add a Elite Skeleton to the map
 				editingMap[tileY][tileX] = 'S';
 				break;
-			case 7: // Health Pack
+			case 7: // Add a Health Pack to the map
 				editingMap[tileY][tileX] = 'h';
 				break;
 
@@ -679,6 +688,7 @@ public class Game extends JFrame {
 
 		}
 
+		//Makes it so the game ticks at a certain rate (60 = 60fps)
 		try {
 			Thread.sleep(16); // 16 = 60fps, 33 = 30fps
 		} catch (Exception exc) {
@@ -688,214 +698,279 @@ public class Game extends JFrame {
 
 	// Rendering ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	// Rendering the Menu
+	/**
+	   * menuRender
+	   * This method renders the menu
+	   * @param g Used to render graphics
+	   */
 	public void menuRender(Graphics g) {
 
-		g.drawImage(img, 0, 0, null);
+		g.drawImage(img, 0, 0, null); //Draws the background image
 
-		g.setColor(Color.BLACK);
+		g.setColor(Color.BLACK); //set colour to black for the outline
+		
+		//Draws the outlines of buttons
 		g.drawRect(640 - 50, 320 + 20, 100, 40);
 		g.drawRect(640 - 50, 370 + 20, 100, 40);
 		g.drawRect(640 - 50, 420 + 20, 100, 40);
 		g.drawRect(640 - 50, 470 + 20, 100, 40);
 		g.drawRect(640 - 50, 520 + 20, 100, 40);
-
-		g.setColor(Color.GREEN);
+ 
+		g.setColor(Color.GREEN); //set colour to green for the text
 		g.setFont(title);
-		drawCenteredString("Java Knight", 1280, 720, g);
+		drawCenteredString("Java Knight", 1280, 720, g); //draw title
 
 		g.setFont(subTitle);
+		
+		//Draws string for each of the options
 		drawCenteredString("Play", 1280, 820, g);
-
-		drawCenteredString(preMadeMaps[selectedMapIndex], 1280, 920, g);
+		drawCenteredString(preMadeMaps[selectedMapIndex], 1280, 920, g); //displays the current map selected
 		drawCenteredString("Map editor", 1280, 1020, g);
 		drawCenteredString("Load map", 1280, 1120, g);
 		drawCenteredString("Quit", 1280, 1220, g);
 	}
 
-	// rendering when you die
+	/**
+	   * deathRender
+	   * This method renders a screen when you die
+	   * @param g Used to render graphics
+	   */
 	public void deathRender(Graphics g) {
 
-		g.setFont(title);
-		drawCenteredString("Game Over", 1280, 720, g);
-
-		g.setFont(subTitle);
-		drawCenteredString("Menu", 1280, 820, g);
-		g.drawRect(640 - 50, 320 + 20, 100, 40);
-
-		drawCenteredString("Quit", 1280, 920, g);
-		g.drawRect(640 - 50, 370 + 20, 100, 40);
+		g.setFont(title); //Sets the font to title
+	    drawCenteredString("Game Over", 1280, 720, g); //Draws a large 'game over!' text (centered in the middle)
+	    
+	    g.setFont(subTitle); //Sets the font to subtitle
+	    
+	    //Draws the boxes and string for options
+	    drawCenteredString("Menu", 1280, 820, g);
+	    g.drawRect(640 - 50, 320 + 20, 100, 40);
+	    
+	    drawCenteredString("Quit", 1280, 920, g);
+	    g.drawRect(640 - 50, 370 + 20, 100, 40);
 
 	}
 
-	// Rendering when you win
+	  /**
+	   * winRender
+	   * This method renders a screen when you win
+	   * @param g Used to render graphics
+	   */
 
 	public void winRender(Graphics g) {
 
-		g.setFont(title);
-		drawCenteredString("You Win!!!", 1280, 720, g);
-
-		g.setFont(subTitle);
-		drawCenteredString("Menu", 1280, 820, g);
-		g.drawRect(640 - 50, 320 + 20, 100, 40);
-
-		drawCenteredString("Quit", 1280, 920, g);
-		g.drawRect(640 - 50, 370 + 20, 100, 40);
+		g.setFont(title); //Sets the font to title
+	    drawCenteredString("You Win!!!", 1280, 720, g); //Draws a large win text (centered in the middle)
+	    
+	    g.setFont(subTitle); //Sets the font to subtitle
+	    
+	    //Draws the boxes and string for options
+	    drawCenteredString("Menu", 1280, 820, g);
+	    g.drawRect(640 - 50, 320 + 20, 100, 40);
+	    
+	    drawCenteredString("Quit", 1280, 920, g);
+	    g.drawRect(640 - 50, 370 + 20, 100, 40);
 
 	}
 
-	// Rendering the Game
+	/**
+	   * gameRender
+	   * This method renders the screen when you play
+	   * @param g Used to render graphics
+	   */
 	public void gameRender(Graphics g) {
-
+		
+		//The camera offset works by drawing the positions of the objects subtracted by the offset.
+		//This means that if the camera has moved 200 units to the right. Any object between 0,0 and 200 will be drawn offscreen.
+		
+		//Loops through the map
 		for (int i = 0; i < map.length; i++) {
 			for (int j = 0; j < map[0].length; j++) {
-				if (map[i][j] == null) {
+				if (map[i][j] == null) { //If the map is null (no information/floor of map) draw a floor tile
 					g.drawImage(sprites.get(2), (int) (j * 32 - offsetX), (int) (i * 32 - offsetY), null);
-				} else {
+				} else { //If it's not null (floor tile) we call the .draw method to draw player, enemy etc
 					map[i][j].draw(g, offsetX, offsetY);
 				}
 			}
 		}
 
+		 //Draws a laserbeam, at the crosshair (lasersight)
 		player.laserBeam(g, (int) (mouseX + offsetX), (int) (mouseY + offsetY), offsetX, offsetY);
-		player.draw(g, offsetX, offsetY);
 
-		player.drawPlayerProjectile(g, offsetX, offsetY);
-		for (int j = 0; j < healthPacks.size(); j++) {
-			healthPacks.get(j).draw(g, offsetX, offsetY);
-		}
+		 //Draws the player
+	    player.draw(g, offsetX, offsetY);
+	    
+	    //Draws the playr projectile
+	    player.drawPlayerProjectile(g, offsetX, offsetY);
 
-		for (int i = 0; i < enemyList.size(); i++) {
+	  //Loops through the health pack arraylist
+	    for (int j = 0; j < healthPacks.size(); j++) {
+	      healthPacks.get(j).draw(g, offsetX, offsetY); //Draws the healthpacks
+	    }
+	    
+	    //Loops through the enemy arraylist
+	    for (int i = 0; i < enemyList.size(); i++) {
+	      (enemyList.get(i)).draw(g, offsetX, offsetY); //Draws the enemy
+	      
+	      if (!enemyList.get(i).getName().equals("zombie")) { //If the enemy isn't a zombie, draw its projectile
+	        ((Skeleton) enemyList.get(i)).drawEnemyProjectile(g, offsetX, offsetY);
+	      }
+	      
+	    }
 
-			(enemyList.get(i)).draw(g, offsetX, offsetY);
-			if (!enemyList.get(i).getName().equals("zombie")) {
-				((Skeleton) enemyList.get(i)).drawEnemyProjectile(g, offsetX, offsetY);
-			}
-		}
-
-		g.setColor(Color.BLACK);
-		g.fillRect((int) (player.getX() - offsetX - 13), (int) (player.getY() - offsetY - 35), 32, 17);
-
-		g.setFont(health);
-		g.setColor(Color.RED);
-		g.drawString("" + (int) player.getHealth(), (int) (player.getX() - offsetX - 13),
-				(int) (player.getY() - offsetY - 20));
-
-		g.drawImage(player.getWeapon().getSprite(), (int) (mouseX - player.getWeapon().getWidth() / 2),
-				(int) (mouseY - player.getWeapon().getHeight() / 2 - 30), null);
-
+	  //Draws the health above the player
+	    g.setColor(Color.BLACK); //Sets colour to black
+	    g.fillRect((int) (player.getX() - offsetX - 13), (int) (player.getY() - offsetY - 35), 32, 17); //Draws the box in which health amount is contained in
+	    
+	    g.setFont(health); //Changes to the health font
+	    g.setColor(Color.RED); //Sets colour to red
+	    g.drawString("" + (int) player.getHealth(), (int) (player.getX() - offsetX - 13), //Draws the health string at player location - offset etc
+	                 (int) (player.getY() - offsetY - 20));
+	    
+	    //Draws the player weapon beside the crosshair
+	    g.drawImage(player.getWeapon().getSprite(), (int) (mouseX - player.getWeapon().getWidth() / 2 ),
+	                (int) (mouseY - player.getWeapon().getHeight() / 2 - 30 ), null);
+	    
 	}
 
+	 /**
+	   * mapEditorRender
+	   * This method renders the map editor
+	   * @param g Used to render graphics
+	   */
 	public void mapEditorRender(Graphics g) {
-		g.setColor(Color.BLACK);
+		//variable used to tie the objects to their sprite
 		int tempInt = 0;
+		
+		//Looping through the map
 		for (int i = 0; i < editingMap.length; i++) {
 			for (int j = 0; j < editingMap[0].length; j++) {
-				if (editingMap[i][j] == 'b') {
+				if (editingMap[i][j] == 'b') { //If its a win block draw a yellow square as win block doesnt have a sprite
 					g.setColor(Color.YELLOW);
 					g.fillRect((int) (32 * j - offsetX), (int) (32 * i - offsetY), 32, 32);
 				} else {
+					//assing the tempInt depending on the object at that tile
 					switch (editingMap[i][j]) {
-					case 'w':
+					case 'w': //Wall
 						tempInt = 0;
 						break;
-					case ' ':
+					case ' ': //Floor
 						tempInt = 2;
 						break;
-					case 's':
+					case 's': //Skeleton
 						tempInt = 4;
 						break;
-					case 'z':
+					case 'z': //Zombie
 						tempInt = 5;
 						break;
-					case 'S':
+					case 'S': //Elite Skeleton
 						tempInt = 6;
 						break;
-					case 'h':
+					case 'h': //Health pack
 						tempInt = 7;
-						g.drawImage(sprites.get(2), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null); // Drawing
-																												// the
-																												// floor
-																												// under
-																												// the
-																												// healthpack
+						g.drawImage(sprites.get(2), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null); // Drawing the floor under the healthpack
 						break;
-					case 'p':
+					case 'p': //Player
 						tempInt = 3;
 						break;
 					}
 
+					//Draw the sprite of the object
 					g.drawImage(sprites.get(tempInt), (int) (32 * j - offsetX), (int) (32 * i - offsetY), null);
 				}
 			}
 		}
 
+		//Drawing the border for the UI
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, 380, 70);
 
+		//Drawing the currently selected block
 		g.setColor(Color.BLACK);
 		g.fillRect(8, 8, 36, 36);
-		if (paintBrush == 8) {
+		if (paintBrush == 8) { //If selected block is the win block
 			g.setColor(Color.YELLOW);
 			g.fillRect(10, 10, 32, 32);
-		} else {
+		} else { //else, draw the sprite of the object
 			g.drawImage(sprites.get(paintBrush), 10, 10, null);
 		}
+		
+		//Drawing the key for the map editor
+		
+		//Drawing the images of the object
+		g.drawImage(sprites.get(0), 60, 10, null); //Wall
+		g.drawImage(sprites.get(2), 100, 10, null); //floor
+		g.setColor(Color.YELLOW); 
+		g.fillRect(140, 10, 32, 32); //win block
+		g.drawImage(sprites.get(3), 180, 10, null); // Player
+		g.drawImage(sprites.get(4), 220, 10, null); // skeleton
+		g.drawImage(sprites.get(5), 260, 10, null); // zombie
+		g.drawImage(sprites.get(6), 300, 10, null); // elite skelton
+		g.drawImage(sprites.get(7), 340, 10, null); // health pack
 
-		g.drawImage(sprites.get(0), 60, 10, null);
-		g.drawImage(sprites.get(2), 100, 10, null);
-		g.setColor(Color.YELLOW);
-		g.fillRect(140, 10, 32, 32);
-		g.drawImage(sprites.get(3), 180, 10, null);
-		g.drawImage(sprites.get(4), 220, 10, null);
-		g.drawImage(sprites.get(5), 260, 10, null);
-		g.drawImage(sprites.get(6), 300, 10, null);
-		g.drawImage(sprites.get(7), 340, 10, null);
-
+		//Drawing the numbers that the user has to press to select they represnt
 		g.setColor(Color.BLACK);
 		g.setFont(subTitle);
 		g.drawString("1     2    3     4     5     6    7     8", 70, 63);
 
 	}
 
-	// Method to change the states of the game and intialize the things needed.
-	public void changeState(int a) {
+	/**
+	   * changeState
+	   * This method changes the game state
+	   * @param state The state specified by the player
+	   */
+	public void changeState(int state) {
 
-		gameState = a;
-
-		if (gameState == 0) {
-			menuInit();
-
-		} else if (gameState == 1) {
-			gameInit();
-		} else if (gameState == 2) {
-			deathInit();
-		} else if (gameState == 3) {
-			winInit();
-		} else if (gameState == 4) {
-			mapEditorInit();
-		}
+	    gameState = state; //sets the class variable state to the state specified by the player
+	    
+	    if (gameState == 0) { //If state == menu, initialize menu
+	      menuInit();
+	      
+	    } else if ((gameState == 1) || (gameState == 4) || (gameState == 5)) { //If state == level 1/level 2/level 3, initialize game
+	      gameInit();
+	      
+	    } else if (gameState == 2) { //If state == death, initialize the death/loss screen
+	      deathInit();
+	      
+	    } else if (gameState == 3) { //If state == win, initialize the win screen
+	      winInit(); 
+	    } else if (gameState == 4) { //If state == map editor, initialize the map editor screen
+	      mapEditorInit();
+	    }
 
 	}
 
+	  /**
+	   * drawCenteredString
+	   * This method draws centered string in java swing, based on specified text, width, and height
+	   * @param text The text to be drawn
+	   * @param width The width of the screen or rect that you would like to centre text in
+	   * @param height The height of the screen or rect that you would like to centre text in
+	   * @param g Draws to the screen
+	   */
 	public void drawCenteredString(String text, int width, int height, Graphics g) {
-		FontMetrics fontMetrics = g.getFontMetrics();
-		int x = (width - fontMetrics.stringWidth(text)) / 2;
-		int y = (fontMetrics.getAscent() + (height - (fontMetrics.getAscent() + fontMetrics.getDescent())) / 2) - 50;
-		g.drawString(text, x, y);
-	}
+	    FontMetrics fontMetrics = g.getFontMetrics(); //Initializes the font metrics varialbe (contains info about text)
+	    
+	    int x = (width - fontMetrics.stringWidth(text)) / 2; //The x of the center = width - font width
+	    int y = (fontMetrics.getAscent() + (height - (fontMetrics.getAscent() + fontMetrics.getDescent())) / 2) - 50; //The y of the center = ascent + (height - (ascent + descent) )
+	    
+	    g.drawString(text, x, y); //Draws the string at the calculated location
+	  }
 
-	/***************************** Key Listener ************************/
-	/** This section is where keyboard input is handled **/
-	/** You will add code to respond to key presses **/
-	/*******************************************************************/
-	class MyKeyListener implements KeyListener {
+	/** Listens and reacts based on keyboard input
+	    * @author Jonathan Cai, Ray Chen, Wajeeh Haider
+	    * @version 1.0
+	    * @since May 31st
+	    */
+	  class MyKeyListener implements KeyListener {
 
+		  /**
+		     * keyTyped
+		     * This method does stuff when certain keys are typed
+		     * @param e A keyEvent
+		     */
 		public void keyTyped(KeyEvent e) {
-
-			if ((gameState == 1) && (e.getKeyChar() == 'l')) {
-				player.setHealth(0);
-			}
 
 			if (gameState == 0) {
 
@@ -906,35 +981,46 @@ public class Game extends JFrame {
 				if ((e.getKeyChar() == 'd') && (selectedMapIndex < preMadeMaps.length - 1)) {
 					selectedMapIndex++;
 				}
-			}
+			} else if (gameState == 1) {
 
-			if (e.getKeyChar() == '1') {
-				player.setWeapon(weapons[0]);
-			} else if (e.getKeyChar() == '2') {
-				player.setWeapon(weapons[1]);
-			} else if (e.getKeyChar() == '3') {
-				player.setWeapon(weapons[2]);
+				if (e.getKeyChar() == '1') { //Player selected pistol
+					player.setWeapon(weapons[0]);
+					
+				} else if (e.getKeyChar() == '2') { //Player selected smg
+					player.setWeapon(weapons[1]);
+					
+				} else if (e.getKeyChar() == '3') { //Player selected shotgun
+					player.setWeapon(weapons[2]);
+				}
 			}
 
 		}
 
+		 /**
+	     * keyPressed
+	     * This method does stuff when certain keys are pressed
+	     * @param e A keyEvent
+	     */
 		public void keyPressed(KeyEvent e) {
 
-			if (e.getKeyCode() == 'W') {
-				up = true;
-			}
-			if (e.getKeyCode() == 'S') {
-				down = true;
-			}
-			if (e.getKeyCode() == 'A') {
-				left = true;
-			}
-			if (e.getKeyCode() == 'D') {
-				right = true;
-			}
+			 if (e.getKeyCode() == 'W') { //If the player hits/holds 'W', move up until they stop
+			        up = true;
+			      }
+			      
+			      if (e.getKeyCode() == 'S') { //If the player hits/holds 'S', move down until they stop
+			        down = true;
+			      }
+			      
+			      if (e.getKeyCode() == 'A') { //If the player hits/holds 'A', move left until they stop
+			        left = true;
+			      }
+			      
+			      if (e.getKeyCode() == 'D') { //If the player hits/holds 'D', move right until they stop
+			        right = true;
+			      }
 
 			if (gameState == 4) {
-				switch (e.getKeyCode()) {
+				switch (e.getKeyCode()) { //Assing paintbrush in map editor
 				case '1': // Wall
 					paintBrush = 0;
 					break;
@@ -962,7 +1048,7 @@ public class Game extends JFrame {
 
 				}
 
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) { //If user pressed enter, print out map into file
 					try {
 						mapOut();
 					} catch (FileNotFoundException e1) {
@@ -973,50 +1059,85 @@ public class Game extends JFrame {
 			}
 		}
 
+		  /**
+	     * keyReleased
+	     * This method does stuff when certain keys are released
+	     * @param e A keyEvent
+	     */
 		public void keyReleased(KeyEvent e) {
 
-			if (e.getKeyCode() == 'W') {
-				up = false;
-			}
-			if (e.getKeyCode() == 'S') {
-				down = false;
-			}
-			if (e.getKeyCode() == 'A') {
-				left = false;
-			}
-			if (e.getKeyCode() == 'D') {
-				right = false;
-			}
-		}
+			 if (e.getKeyCode() == 'W') { //If the player lets go of 'W', stop moving up
+		        up = false;
+		      }
+		      
+		      if (e.getKeyCode() == 'S') { //If the player lets go of 'S', stop moving down
+		        down = false;
+		      }
+		      
+		      if (e.getKeyCode() == 'A') { //If the player lets go of 'A', stop moving left
+		        left = false;
+		      }
+		      
+		      if (e.getKeyCode() == 'D') { //If the player lets go of 'D', stop moving right
+		        right = false;
+		      }
+			      
+	    }
+
 	}
 
-	/****** Key Listener *********************************/
-
-	/**************************** Mouse Listener ************************/
-	/** This section is where mouse input is handled **/
-	/** You may have to add code to respond to mouse clicks **/
-	/********************************************************************/
+	  /** Listens and reacts based on mouse motion
+	    * @author Jonathan Cai, Ray Chen, Wajeeh Haider
+	    * @version 1.0
+	    * @since May 31st
+	    */
 	class MyMouseMotionListener implements MouseMotionListener {
 
-		public void mouseDragged(MouseEvent e) {
-			mouseX = e.getX() - 7;
-			mouseY = e.getY() - 30;
-		}
-
-		public void mouseMoved(MouseEvent e) {
-			mouseX = e.getX() - 7;
-			mouseY = e.getY() - 30;
-
-		}
+		/**
+	     * mouseDragged
+	     * This method does stuff when you drag the mouse
+	     * @param e A mouse event
+	     */
+	    public void mouseDragged(MouseEvent e) { //Update the mouseposition based on the cursor's position and an offset to increase accuracy
+	      mouseX = e.getX() - 7;
+	      mouseY = e.getY() - 30;
+	    }
+	    
+	    /**
+	     * mouseMoved
+	     * This method does stuff when you move the mouse
+	     * @param e A mouse event
+	     */
+	    public void mouseMoved(MouseEvent e) { //Update the mouseposition based on the cursor's position and an offset to increase accuracy
+	      mouseX = e.getX() - 7;
+	      mouseY = e.getY() - 30;
+	      
+	    }
 
 	}
 
+	   /** MyMouseListener
+	    * Listens and reacts based on mouse clicks
+	    * @author Jonathan Cai, Ray Chen, Wajeeh Haider
+	    * @version 1.0
+	    * @since May 31st
+	    */
 	class MyMouseListener implements MouseListener {
 
+		 /**
+	     * mouseClicked
+	     * This method does stuff when you click the mouse
+	     * @param e A mouse event
+	     */
 		public void mouseClicked(MouseEvent e) {
 
 		}
 
+		 /**
+	     * mousePressed
+	     * This method does stuff when you press the mouse
+	     * @param e A mouse event
+	     */
 		public void mousePressed(MouseEvent e) {
 
 			// temporary variables just in case the mouse has to be offset
@@ -1024,44 +1145,42 @@ public class Game extends JFrame {
 			int tempY = e.getY();
 
 			// menu buttons
-			if ((gameState == 0) && (tempX >= 590) && (tempX <= 690)) {
-				if ((tempY >= 370) && (tempY <= 410)) {
+			if ((gameState == 0) && (tempX >= 590) && (tempX <= 690)) { //Check if in the menu screen and the mouse position is in the collumn where all the buttons are located
+				if ((tempY >= 370) && (tempY <= 410)) { //Pressed play
 					mapName = preMadeMaps[selectedMapIndex];
 					changeState(1);
 
-				} else if ((tempY >= 460) && (tempY <= 500)) {
+				} else if ((tempY >= 460) && (tempY <= 500)) { //Pressed Map editor
 					changeState(4);
 
-				} else if ((tempY >= 510) && (tempY <= 550)) {
+				} else if ((tempY >= 510) && (tempY <= 550)) { //Pressed load map
 					System.out.print("\nPlease enter the nane of the map file: ");
 					mapName = input.nextLine();
 					changeState(1);
 
-				} else if ((tempY >= 560) && (tempY <= 600)) {
+				} else if ((tempY >= 560) && (tempY <= 600)) { //Pressed quit
 					System.exit(0);
 				}
 
-			} else if ((gameState == 1) || (gameState == 4)) {
+			} else if ((gameState == 1) || (gameState == 4)) { //Check if the player is holding the mouse button down
 				shooting = true;
 
 				// death screen buttons
-			} else if ((gameState == 2) && (tempX >= 590) && (tempX <= 690)) {
+			} else if (((gameState == 2)||(gameState == 3)) && (tempX >= 590) && (tempX <= 690)) { //Check if in the death or win screen as they have the same button positions
 
-				if ((tempY >= 340) && (tempY <= 410)) {
+				if ((tempY >= 340) && (tempY <= 410)) { //Pressed menu
 					changeState(0);
-				} else if ((tempY >= 370) && (tempY <= 460)) {
-					System.exit(0);
-				}
-				// win screen buttons
-			} else if ((gameState == 3) && (tempX >= 590) && (tempX <= 690)) {
-				if ((tempY >= 340) && (tempY <= 410)) {
-					changeState(0);
-				} else if ((tempX <= 690) && (tempY >= 370) && (tempY <= 460)) {
+				} else if ((tempY >= 370) && (tempY <= 460)) { // Pressed quit
 					System.exit(0);
 				}
 			}
 		}
-
+		
+		/**
+	     * mouseReleased
+	     * This method does stuff when you release the mouse
+	     * @param e A mouse event
+	     */
 		public void mouseReleased(MouseEvent e) {
 			if ((gameState == 1) || (gameState == 4)) {
 				shooting = false;
@@ -1069,10 +1188,20 @@ public class Game extends JFrame {
 
 		}
 
+		 /**
+	     * mouseEntered
+	     * This method does stuff when you move the mouse onto the window
+	     * @param e A mouse event
+	     */
 		public void mouseEntered(MouseEvent e) {
 
 		}
 
+		/**
+	     * mouseExited
+	     * This method does stuff when you move the mouse off the window
+	     * @param e A mouse event
+	     */
 		public void mouseExited(MouseEvent e) {
 
 		}

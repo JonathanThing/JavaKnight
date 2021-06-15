@@ -1,4 +1,4 @@
-
+  
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -9,62 +9,61 @@ import java.awt.Rectangle;
 
 class Skeleton extends Enemy {
 
-	private long lastShot;
-	private Player player;
+ private long lastShot;
+ private Player player;
+ 
+ public void shoot(Player player) {
+  int playerX = (int) (player.getX());
+  int playerY = (int) (player.getY());
 
-	public void shoot(Player player) {
-		int playerX = (int) (player.getX());
-		int playerY = (int) (player.getY());
+  double xDifference = getX() - player.getX();
+  double yDifference = getY() - player.getY();
 
-		double xDifference = getX() - player.getX();
-		double yDifference = getY() - player.getY();
+  double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-		double hyp = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
+  double xChange = ((xDifference / hyp)*7);
+  double yChange = ((yDifference / hyp)*7);
 
-		double xChange = ((xDifference / hyp) * 7);
-		double yChange = ((yDifference / hyp) * 7);
+  
+  if (this.getName().equals("eliteSkeleton")) {
+   for (int i = 0 ; i < 4; i++) {
+    this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20, xChange+Math.random()*-2 + 1, yChange+Math.random()*-2 + 1));
+   }
+  } else {
+   this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20, xChange, yChange));
 
-		if (this.getName().equals("eliteSkeleton")) {
-			for (int i = 0; i < 4; i++) {
-				this.getProjectilesList().add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20,
-						xChange + Math.random() * -2 + 1, yChange + Math.random() * -2 + 1));
-			}
-		} else {
-			this.getProjectilesList()
-					.add(new Projectile(getX(), getY(), 20, 20, "Bullet", getSprite(), 20, xChange, yChange));
+  }
+ }
 
-		}
-	}
+ public void moveProjectile() {
 
-	public void moveProjectile() {
+  for (int i = 0; i < this.getProjectilesList().size(); i++) {
 
-		for (int i = 0; i < this.getProjectilesList().size(); i++) {
+   (this.getProjectilesList().get(i)).moveUp((this.getProjectilesList().get(i)).getChangeY());
+   (this.getProjectilesList().get(i)).moveLeft((this.getProjectilesList().get(i)).getChangeX());
 
-			(this.getProjectilesList().get(i)).moveUp((this.getProjectilesList().get(i)).getChangeY());
-			(this.getProjectilesList().get(i)).moveLeft((this.getProjectilesList().get(i)).getChangeX());
+  }
 
-		}
+ }
 
-	}
+ public void drawEnemyProjectile(Graphics g, double offSetX, double offSetY) {
+  for (int i = 0; i < this.getProjectilesList().size(); i++) {
+   (this.getProjectilesList().get(i)).draw(g, offSetX, offSetY);
+  }
+ }
+ 
 
-	public void drawEnemyProjectile(Graphics g, double offSetX, double offSetY) {
-		for (int i = 0; i < this.getProjectilesList().size(); i++) {
-			(this.getProjectilesList().get(i)).draw(g, offSetX, offSetY);
-		}
-	}
+ Skeleton(double x, double y, int width, int height, String name, BufferedImage sprite, double health, Weapon weapon) {
+  super(x, y, width, height, name, sprite, health, weapon);
+  lastShot = System.nanoTime();
+ }
 
-	Skeleton(double x, double y, int width, int height, String name, BufferedImage sprite, double health,
-			Weapon weapon) {
-		super(x, y, width, height, name, sprite, health, weapon);
-		lastShot = System.nanoTime();
-	}
-
-	public void attack(Player player) {
-
-		if (System.nanoTime() - lastShot >= 1e9 * this.getWeapon().getFireRate()) {
-			this.shoot(player);
-			lastShot = System.nanoTime();
-		}
-	}
+ public void attack(Player player) {
+  
+  if (System.nanoTime()-lastShot >= 1e9 * this.getWeapon().getFireRate()) {
+   this.shoot(player); 
+   lastShot = System.nanoTime();
+  }
+ }
 
 }
