@@ -1,5 +1,5 @@
 # JavaKnight
-Gr.11 Final Project
+Gr.11 CS Final Project
 
 A top down shooter gamer made in Java. 
 The player navigates dungeons and battle enemies.
